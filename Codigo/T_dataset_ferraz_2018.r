@@ -13,15 +13,17 @@ library( plyr )
 library( DescTools )
 library( haven )
 
-setwd("G:/Trabalho/Dissertacao/Datasets/Ferraz/Stata/")
+setwd( "G:/Trabalho/Dissertacao/Datasets/Ferraz/Stata/" )
 
 #path <- "G:/Trabalho/Dissertacao/Datasets/Ferraz/Stata/"
 
 names <- list.files( pattern = "*.dta" )
 
 for( i in names ){
-  
-  assign( i, read_dta( i ) )
+
+  corrected_name <- tools::file_path_sans_ext( i )
+    
+  assign( corrected_name, read_dta( i ) )
 }
 
 length( unique( `table4-1.dta`$cod_munic ) )
@@ -32,6 +34,40 @@ length( unique( `table4-1.dta`$cod_munic ) )
 # data_table41 <- as.data.frame( read_dta( "table4-1.dta" ) )
 data_table2 <- as.data.frame( read_dta( "table2.dta" ) )
 data_table1 <- as.data.frame( read_dta( "table1.dta" ) )
+
+options( digits = 5 )
+
+table1$lpop <- log( table1$pop )
+
+test_table1_lpop <- as.data.frame( table1$lpop )
+test_table1_lpop <- as.data.frame( test_table1_lpop[ order( test_table1_lpop[ , 1 ], decreasing = FALSE ), ] )
+test_table1_lpop <- as.data.frame( test_table1_lpop[ -c( 1 ), ] )
+colnames( test_table1_lpop ) <- "lpop"
+
+test_table2_lpop <- as.data.frame( table2$lpop )
+test_table2_lpop <- as.data.frame( test_table2_lpop[ order( test_table2_lpop[ , 1 ], decreasing = FALSE ), ] )
+colnames( test_table2_lpop ) <- "lpop"
+
+test_table3_lpop <- as.data.frame( table3$lpop )
+test_table3_lpop <- as.data.frame( test_table3_lpop[ order( test_table3_lpop[ , 1 ], decreasing = FALSE ), ] )
+colnames( test_table3_lpop ) <- "lpop"
+
+rm(log_test_df )
+log_test_df <- as.data.frame( cbind( test_table1_lpop$lpop, test_table2_lpop$lpop, test_table3_lpop$lpop ) )
+# log_test_df <- data.frame( )
+# log_test_df$V1 <- test_table1_lpop$
+# log_test_df$V2 <- test_table2_lpop$lpop
+# log_test_df$V3 <- test_table3_lpop$lpop
+log_test_df$diff <- log_test_df$V1 - log_test_df$V2
+log_test_df$less1 <- log_test_df$diff < 1
+
+print( typeof( table2$lpop[ 5 ] ) )
+print( typeof( table1$pop[ 5 ] ) )
+
+table1$lpop[ 2 ]
+
+match_ferraz_ferraz <- match( table1$lpop, table2$lpop )
+match_ferraz_ferraz <- match( table2$lpop, table1$lpop )
 
 which( data_table1 == 12708, arr.ind = TRUE )
 
