@@ -69,6 +69,8 @@ ibge_populacao_censo$id_city_ibge <- as.numeric( ibge_populacao_censo$id_city_ib
 
 write.csv( ibge_populacao_censo, "ibge_populacao_censo_2000.csv" )
 
+banco_ibge_source <- read.csv( "ibge_populacao_censo_2000.csv", sep = "," )
+
 # IBGE - População Source #
 
 # ATENÇÃO: os anos de 2000 e 2004 apresentam municípios que foram modificados nos anos subsequentes( 2001 e 2005 )
@@ -76,7 +78,9 @@ lista <- list.files( pattern = "*.xls" )
 
 for( i in lista ){
   
-  assign( i, read_xls( i ) )
+  corrected_name <- tools::file_path_sans_ext( i )
+  
+  assign( corrected_name, read_xls( i ) )
 }
 
 
@@ -134,9 +138,9 @@ ibge_0104 <- left_join( ibge_0104, fpm[ , c( "municipio", "id_city_ibge", "uf" )
 
 write.csv( ibge_0104, "ibge_0104.csv" )
 
-sum( is.na( ibge_0104$id_city_ibge ) )
+ibge_0104 <- read.csv( "ibge_0104.csv", sep = "," )
 
-ibge_0104_avg_pop <- aggregate(  )
+sum( is.na( ibge_0104$id_city_ibge ) )
 
 # Juntar bancos do segundo ciclo
 
@@ -157,9 +161,13 @@ ibge_0508 <- left_join( ibge_0508, fpm[ , c( "municipio", "id_city_ibge", "uf" )
 
 write.csv( ibge_0104, "ibge_0104.csv" )
 
+ibge_0508 <- read.csv( "ibge_0508.csv", sep = "," )
+
 # Juntar bancos de ambos os ciclos
   
 ibge_0108 <- merge( ibge_0104, ibge_0508, all = TRUE )
+write.csv( ibge_0108, "ibge_0108.csv" )
+
 
 # IBGE BASE DOS DADOS #
 

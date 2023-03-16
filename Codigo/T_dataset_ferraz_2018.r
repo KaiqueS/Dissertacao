@@ -26,18 +26,44 @@ for( i in names ){
   assign( corrected_name, read_dta( i ) )
 }
 
-length( unique( `table4-1.dta`$cod_munic ) )
+length( unique( table4-1$cod_munic ) )
 
-#data_list <- lapply( names, read_dta )
+# Trabalharemos com a Table2. Usaremos um arredondamento do exp( 1 ) para reverter o logaritmo natural da lpop
+#options( digits = 5 )
 
-# data_fig3 <- as.data.frame( read_dta( "figure3.dta" ) )
-# data_table41 <- as.data.frame( read_dta( "table4-1.dta" ) )
-data_table2 <- as.data.frame( read_dta( "table2.dta" ) )
-data_table1 <- as.data.frame( read_dta( "table1.dta" ) )
+table2$populacao <- round( exp( table2$lpop ) )
 
-options( digits = 5 )
+match_ferraz_ibge <- match( table2$populacao, banco_ibge_source$populacao )
+match_ferraz_ibge <- match( banco_ibge_source$populacao, table2$populacao )
+match_ferraz_ibge <- match_ferraz_ibge[ complete.cases( match_ferraz_ibge ) ]
 
-table1$lpop <- log( table1$pop )
+match_ferraz_ibge <- match( ibge_0108$populacao, table2$populacao )
+match_ferraz_ibge <- match( table2$populacao, ibge_0108$populacao )
+match_ferraz_ibge <- match_ferraz_ibge[ complete.cases( match_ferraz_ibge ) ]
+
+table2$id_city_ibge <- ibge_0108[ match_ferraz_ibge, "id_city_ibge" ]
+
+match_ferraz_ibge <- match( table2$populacao, banco_ibge_populacao$populacao )
+match_ferraz_ibge <- match( banco_ibge_populacao$populacao, table2$populacao )
+match_ferraz_ibge <- match_ferraz_ibge[ complete.cases( match_ferraz_ibge ) ]
+
+table2$id_city_ibge <- banco_ibge_populacao[ match_ferraz_ibge, ]
+
+# ----------- #
+
+data_table1$lpop <- log( data_table1$pop, base = exp( 1 ) )
+data_table3$pop <- round( exp( data_table3$lpop ) )
+
+compare_pop <- as.data.frame( cbind( data_table1$pop, data_table3$pop ) )
+compare_pop$V3 <- round( compare_pop$V2 )
+
+match_compare_pop <- match( compare_pop$V1, compare_pop$V3 )
+match_compare_pop <- match_compare_pop[ complete.cases( match_compare_pop ) ]
+length( unique( match_compare_pop ) )
+unmatch_compare_pop <- intersect( compare_pop$V1, compare_pop$V3 )
+compare_pop[ unmatch_compare_pop, ]
+
+placeholder <- as.data.frame( compare_pop[ match_compare_pop, ] )
 
 test_table1_lpop <- as.data.frame( table1$lpop )
 test_table1_lpop <- as.data.frame( test_table1_lpop[ order( test_table1_lpop[ , 1 ], decreasing = FALSE ), ] )
