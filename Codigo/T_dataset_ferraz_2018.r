@@ -26,7 +26,7 @@ for( i in names ){
   assign( corrected_name, read_dta( i ) )
 }
 
-length( unique( table4-1$cod_munic ) )
+length( unique( `table4-1`$cod_munic ) )
 
 # Trabalharemos com a Table2. Usaremos um arredondamento do exp( 1 ) para reverter o logaritmo natural da lpop
 #options( digits = 5 )
@@ -37,11 +37,17 @@ match_ferraz_ibge <- match( table2$populacao, banco_ibge_source$populacao )
 match_ferraz_ibge <- match( banco_ibge_source$populacao, table2$populacao )
 match_ferraz_ibge <- match_ferraz_ibge[ complete.cases( match_ferraz_ibge ) ]
 
+# PREFERÍVEL -> #
+
 match_ferraz_ibge <- match( ibge_0108$populacao, table2$populacao )
 match_ferraz_ibge <- match( table2$populacao, ibge_0108$populacao )
 match_ferraz_ibge <- match_ferraz_ibge[ complete.cases( match_ferraz_ibge ) ]
 
+table2 <- left_join( table2, ibge_0508[ , c( "populacao", "id_city_ibge" ) ], by = "populacao" )
+
 table2$id_city_ibge <- ibge_0108[ match_ferraz_ibge, "id_city_ibge" ]
+
+# PREFERÍVEL <- #
 
 match_ferraz_ibge <- match( table2$populacao, banco_ibge_populacao$populacao )
 match_ferraz_ibge <- match( banco_ibge_populacao$populacao, table2$populacao )

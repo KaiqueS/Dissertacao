@@ -23,8 +23,8 @@ setwd( "G:/Trabalho/Dissertacao/Datasets/IBGE/ibge_pop_censo_source/" )
 url_ftp_censo_2000 <- "https://ftp.ibge.gov.br/Censos/Censo_Demografico_2000/Dados_do_Universo/Municipios/"
 
 links_dos_bancos <- as.data.frame( read_html( url_ftp_censo_2000 ) %>%
-                                     html_nodes( "a" ) %>%
-                                     html_attr( "href" ) )
+                                   html_nodes( "a" ) %>%
+                                   html_attr( "href" ) )
 
 links_dos_bancos <- as.data.frame( links_dos_bancos[ -c( 1, 2, 3, 4, 5 ), ] )
 
@@ -159,15 +159,17 @@ ibge_0508 <- ibge_0508[ , -c( 1 ) ]
 
 ibge_0508 <- left_join( ibge_0508, fpm[ , c( "municipio", "id_city_ibge", "uf" ) ], by = c( "municipio", "uf" ) )
 
-write.csv( ibge_0104, "ibge_0104.csv" )
+write.csv( ibge_0508, "ibge_0508.csv" )
 
 ibge_0508 <- read.csv( "ibge_0508.csv", sep = "," )
 
 # Juntar bancos de ambos os ciclos
   
 ibge_0108 <- merge( ibge_0104, ibge_0508, all = TRUE )
+
 write.csv( ibge_0108, "ibge_0108.csv" )
 
+ibge_0108 <- read.csv( "ibge_0108.csv", sep = "," )
 
 # IBGE BASE DOS DADOS #
 
@@ -195,6 +197,8 @@ write.csv( df, "ibge_populacao_bdd.csv" )
 banco_ibge_populacao <- read.csv( "ibge_populacao_bdd.csv", sep = "," )
 banco_ibge_populacao <- subset( banco_ibge_populacao, ano == 2000 )
 colnames( banco_ibge_populacao )[ colnames( banco_ibge_populacao ) == "id_municipio" ] <- "id_city_ibge"
+banco_ibge_populacao$log_natural_pop <- log( banco_ibge_populacao$populacao )
+banco_ibge_populacao <- banco_ibge_populacao[ , -c( 1 ) ]
 
 # TODO: média populacional para anos 2001 = 2000, 2001, 2002
 #                                    2005 = 2004, 2005, 2006
