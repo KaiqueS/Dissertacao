@@ -12,6 +12,8 @@ library( plyr )
 library( basedosdados )
 library( DescTools )
 library( magrittr )
+library( tm )
+library( stringi )
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/Sorteios/" )
 
@@ -41,8 +43,34 @@ for( link in links_sorteios ){
   data <- as.data.frame( data[ grepl( "1º|31º", data$`read_html(link) %>% html_nodes(xpath = "//p") %>% html_text()` ), ] )
   colnames( data ) <- "valores"
   
-  assign( num_sorteio, data )
+  cities_to_rows <- str_replace_all( data$valores, "\\d(.*?)\\d[[º]]", "," )
+  cities_to_rows <- as.data.frame( cities_to_rows )
+  cities_to_rows <- cities_to_rows %>% 
+                    mutate( cities_to_rows = strsplit( as.String( cities_to_rows ), "," ) ) %>%
+                    unnest( cities_to_rows )
+  cities_to_rows <- cities_to_rows[ !apply( cities_to_rows == "", 1, all ), ]
+  cities_to_rows$cities_to_rows <- substring( cities_to_rows$cities_to_rows, 3 )
+  colnames( cities_to_rows )[ colnames( cities_to_rows ) == "cities_to_rows" ] <- "municipio"
+  cities_to_rows$uf <- str_extract( cities_to_rows$municipio, '\\b\\w+$' )
+  
+  #assign( num_sorteio, data )
+  assign( num_sorteio, cities_to_rows )
 }
+
+#data <- data %>% mutate( municipios = str_extract( valores, '\\D+(?=\\d+)' ) )
+data <- data %>% str_replace_all( data$valores, "\\d(.*?)\\d[[º]]", "," ) %>% strsplit( as.String( valores ), "," ) %>% unnest( valores )
+#teste <- str_replace_all( data$valores, "[[º]]", "" )
+teste <- str_replace_all( data$valores, "\\d(.*?)\\d[[º]]", "," )
+teste <- as.data.frame( teste )
+teste <- teste %>% 
+         mutate( teste = strsplit( as.String( teste ), "," ) ) %>%
+         unnest( teste )
+teste <- teste[ !apply( teste == "", 1, all ), ]
+teste$teste <- substring( teste$teste, 3 )
+teste$estado <- str_extract( teste$teste, '\\b\\w+$' )
+
+#teste <- str_replace_all( data$valores, "[[:punct:][:digit:][:cntrl:][º]]", "" )
+teste
 
 #teste <- lapply( links_sorteios, as.data.frame( function( x ) { read_html( x ) %>% html_nodes( xpath = "//p" ) %>% html_text( ) } ) )
 teste <- lapply( links_sorteios, function( x ) { read_html( x ) %>% html_nodes( xpath = "//p" ) %>% html_text( ) } )
