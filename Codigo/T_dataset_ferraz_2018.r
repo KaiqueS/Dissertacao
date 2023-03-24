@@ -17,6 +17,8 @@ setwd( "G:/Trabalho/Dissertacao/Datasets/Ferraz/Stata/" )
 
 #path <- "G:/Trabalho/Dissertacao/Datasets/Ferraz/Stata/"
 
+# Ferraz usa dados das eleições de 2004, 2008 e 2012
+
 names <- list.files( pattern = "*.dta" )
 
 for( i in names ){

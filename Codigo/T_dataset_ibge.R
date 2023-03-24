@@ -197,6 +197,7 @@ write.csv( df, "ibge_populacao_bdd.csv" )
 banco_ibge_populacao <- read.csv( "ibge_populacao_bdd.csv", sep = "," )
 banco_ibge_populacao <- subset( banco_ibge_populacao, ano == 2000 )
 colnames( banco_ibge_populacao )[ colnames( banco_ibge_populacao ) == "id_municipio" ] <- "id_city_ibge"
+colnames( banco_ibge_populacao )[ colnames( banco_ibge_populacao ) == "sigla_uf" ] <- "uf"
 banco_ibge_populacao$log_natural_pop <- log( banco_ibge_populacao$populacao )
 banco_ibge_populacao <- banco_ibge_populacao[ , -c( 1 ) ]
 

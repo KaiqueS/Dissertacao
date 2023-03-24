@@ -8,43 +8,41 @@ library( "rvest" )
 library( ff )
 #library( ffbase )
 library( dplyr )
-library( plyr )
+#library( plyr )
 library( basedosdados )
 library( DescTools )
 library( magrittr )
 library( tm )
 library( stringi )
+library( gtools )
+library( ff )
+#library( ffbase )
+library( haven )
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/Sorteios/" )
 
-# RASPAR OS SITES DA CGU PARA PEGAR CIDADES SORTEADAS NAS LOTERIAS 22-38
+# RASPAR OS SITES DA CGU PARA PEGAR CIDADES SORTEADAS NAS LOTERIAS 22-38 #
 
+# Site da CGU contendo links para as páginas das cidades sorteadas
 link_cgu_loterias <- "https://www.gov.br/cgu/pt-br/assuntos/auditoria-e-fiscalizacao/programa-de-fiscalizacao-em-entes-federativos/edicoes-anteriores/municipios"
 
+# Extraindo somente as páginas dos municípios sorteados
 links_sorteios <- read_html( link_cgu_loterias ) %>% 
                              html_nodes( "a" ) %>%
                              html_attr( "href" ) %>%
                              str_subset( "https://www.gov.br/cgu/pt-br/assuntos/auditoria-e-fiscalizacao/programa-de-fiscalizacao-em-entes-federativos/edicoes-anteriores/municipios/" )
 
-#paginas_sorteios <- lapply( links_sorteios, read_html )
-
-#teste <- read_html( links_sorteios[ 1 ] )
+# Tratando as páginas: removendo informações desnecessárias e mantendo apenas nomes das cidades e os estados das quais fazem parte
+#                      após a limpeza, carregar cidades, estados e respectivo número do sorteio em dataframes para cada sorteio.
 for( link in links_sorteios ){
   
   num_sorteio <- gsub( "https://www.gov.br/cgu/pt-br/assuntos/auditoria-e-fiscalizacao/programa-de-fiscalizacao-em-entes-federativos/edicoes-anteriores/municipios/" , "" , link )
   
-  #assign( num_sorteio, link )
-  
-  #assign( num_sorteio, as.data.frame( as.data.frame( read_html( link ) %>% html_nodes( xpath = "//p" ) %>% html_text( ) )[ -c( 3:8 ), ] ) )
-  #assign( num_sorteio, as.data.frame( as.data.frame( read_html( link ) %>% html_nodes( xpath = "//p" ) %>% html_text( ) )[ grepl( "1º", colnames( num_sorteio ) ), ] ) )
-  ##assign( num_sorteio, as.data.frame( read_html( link ) %>% html_nodes( xpath = "//p" ) %>% html_text( ) ) )
-  
   data <- as.data.frame( read_html( link ) %>% html_nodes( xpath = "//p" ) %>% html_text( ) )
   data <- as.data.frame( data[ grepl( "1º|31º", data$`read_html(link) %>% html_nodes(xpath = "//p") %>% html_text()` ), ] )
+  
   colnames( data ) <- "valores"
   
-  #cities_to_rows <- str_replace_all( data$valores, "\\d(.*?)\\d[[º]]", "," ) # Erro aqui: removendo primeira cidade
-  #cities_to_rows <- str_replace_all( data$valores, "\\d[º]", "," )
   cities_to_rows <- str_replace_all( data$valores, "\\d[º]|\\d [º]", "," )
   cities_to_rows <- as.data.frame( cities_to_rows )
   cities_to_rows <- cities_to_rows %>% 
@@ -53,26 +51,28 @@ for( link in links_sorteios ){
                     unique( )
   
   cities_to_rows <- cities_to_rows[ !apply( cities_to_rows == "", 1, all ), ]
-  #cities_to_rows$cities_to_rows <- substring( cities_to_rows$cities_to_rows, 4 )
+  
   cities_to_rows$cities_to_rows <- str_replace_all( cities_to_rows$cities_to_rows, "[^[:alnum:][:space:]]", "" )
   cities_to_rows$cities_to_rows <- str_replace_all( cities_to_rows$cities_to_rows, "[[:digit:]]", "" )
+  
   colnames( cities_to_rows )[ colnames( cities_to_rows ) == "cities_to_rows" ] <- "municipio"
-  #cities_to_rows$uf <- str_extract( cities_to_rows$municipio, '\\b\\w+$' )
+  
   cities_to_rows$uf <- str_replace_all( cities_to_rows$municipio, ".*\\b([A-Z]{2})", "\\1" )
+  
   cities_to_rows$sorteio <- gsub( "[^0-9]", "", num_sorteio )
-  #cities_to_rows$municipio <- sub( "\\s+[^ ]+$", "", cities_to_rows$municipio )
-  #cities_to_rows$municipio <- sub( "\\s+[^ ]+$", "", cities_to_rows$municipio )
+  
   cities_to_rows$municipio <- gsub( "([A-Z]{2}).*", "", cities_to_rows$municipio )
   cities_to_rows$municipio <- trimws( cities_to_rows$municipio, which = "both" )
-  #cities_to_rows$municipio <- gsub( "[^[:alnum:][:space:]]", "", cities_to_rows$municipio )
   
-  #assign( num_sorteio, data )
   assign( num_sorteio, cities_to_rows )
 }
 
+# Removendo items irrelevantes do Global Environment. Faço isso pois uso os itens relevantes na construção da lista
+# que contém as bases a serem usadas na versão final do banco de municípios sorteados.
 rm( `21o-sorteio`, `40o-sorteio`, `copy_of_38-sorteio`, cities_to_rows, data, link, link_cgu_loterias, links_sorteios, num_sorteio )
 
-# Sorteios com problemas: 22[2,42,50,], 23[42], 26[14, 52], 27[39], 28[30, 52], 29[11, 28, 31], 30[32, 34, 52], 33[26], 36[42], 38[56]
+# Sorteios com problemas: 22[2,42,50,], 23[42], 26[14, 52], 27[39], 28[30, 52], 29[11, 28, 31], 30[32, 34, 52], 33[26], 36[42] e 36[21, uf], 38[56]
+# PROBLEMAS: Nomes das cidades incorretos por acentos e pontuação. Como são poucas, corrijo manualmente
 `22o-sorteio`[ c( 2, 42, 50 ), "municipio" ] <- c( "Sítio d'Abadia", "Olho d'Água do Casado", "Olho-d'Água do Borges" )
 `23o-sorteio`[ c( 42 ), "municipio" ] <- c( "Igarapé-Açu" )
 `26o-sorteio`[ c( 14, 52 ), "municipio" ] <- c( "Entre-Ijuís", "Apicum-Açu" )
@@ -84,8 +84,44 @@ rm( `21o-sorteio`, `40o-sorteio`, `copy_of_38-sorteio`, cities_to_rows, data, li
 `36-sorteio`[ c( 42 ), "municipio" ] <- c( "Olho-d'Água do Borges" )
 `38-sorteio`[ c( 56 ), "municipio" ] <- c( "São João d'Aliança" )
 
+`36-sorteio`[ c( 21 ), "uf" ] <- c( "MG" )
+
+# Montando lista com todos os dataframes relevantes
 todos_bancos <- Filter( function( x ) is( x, "data.frame" ), mget( ls( ) ) )
 
+# Mergindo os bancos com municípios sorteados de cada loteria em um único banco
 bancos_mergidos <- Reduce( function( x, y ) merge( x, y, all = TRUE ), todos_bancos )
 
+# TRATAMENTO: removendo carácteres irregulares das siglas UF dos estados
+bancos_mergidos$uf <- str_replace_all( bancos_mergidos$uf, "[^[A-Z]]", "" )
+
+# DO: ordernar siglas dos estados alfabeticamente e atribuir a cada sigla um valor de 1 a 26
+lista_estados <- setNames( data.frame( mixedsort( unique( bancos_mergidos$uf ) ) ), "uf" )
+lista_estados$uf_id <- seq.int( nrow( lista_estados ) )
+
+bancos_mergidos <- left_join( bancos_mergidos, lista_estados[ , c( "uf", "uf_id" ) ], by = "uf" )
+
+# Banco final: municípios sorteados nas loterias 22 a 38
 write.csv( bancos_mergidos, "municipios_sorteados_22-38.csv" )
+
+municipios_sorteados <- read.csv( "municipios_sorteados_22-38.csv", sep = "," )
+
+# TRATAMENTO: removendo colunas inseridas por causa do formato csv
+municipios_sorteados <- municipios_sorteados[ , -c( 1 ) ]
+
+# TESTE - IBGE + MUNICIPIOS SORTEADOS #
+
+teste <- left_join( municipios_sorteados, banco_ibge_source[ , c( "municipio", "populacao", "id_city_ibge" ) ], by = "municipio" )
+teste <- left_join( municipios_sorteados, banco_ibge_source[ , c( "municipio", "id_city_ibge" ) ], by = "municipio" )
+teste <- left_join( banco_ibge_populacao, teste[ , c( "municipio", "id_city_ibge", "sorteio", "uf" ) ], by = c( "uf", "id_city_ibge" ) )
+teste <- teste[ complete.cases( teste ), ]
+sum( is.na( teste$municipio ) )
+
+table2 <- read_dta( "table2.dta" )
+table2$populacao <- round( exp( table2$lpop ) )
+
+rm(teste_ferraz)
+
+teste_ferraz <- left_join( table2, teste[ , c( "sorteio", "municipio", "id_city_ibge", "populacao", "uf" ) ], by = c( "sorteio", "populacao" ) )
+teste_ferraz <- teste_ferraz[ complete.cases( teste_ferraz ), ]
+sum( is.na( teste_ferraz$id_city_ibge ) )

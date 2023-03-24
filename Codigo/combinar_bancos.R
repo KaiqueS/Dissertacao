@@ -15,6 +15,7 @@ library( DescTools )
 setwd( "G:/Trabalho/Dissertacao/Datasets/TSE" )
 setwd( "G:/Trabalho/Dissertacao/Datasets/IBGE/" )
 setwd( "G:/Trabalho/Dissertacao/Datasets/Ferraz/Stata/" )
+setwd( "G:/Trabalho/Dissertacao/Datasets/Sorteios/" )
 
 options( digits = 22 )
 
