@@ -17,7 +17,7 @@ library( sandwich )
 library( plm )
 
 setwd("G:/Trabalho/Dissertacao/Datasets/Brollo/")
-setwd( "/media/kaique/Arquivos/Trabalho/Dissertacao/Datasets/Brollo/" )
+#setwd( "/media/kaique/Arquivos/Trabalho/Dissertacao/Datasets/Brollo/" )
 
 options( digits = 22 )
 

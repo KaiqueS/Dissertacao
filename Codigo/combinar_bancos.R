@@ -21,7 +21,7 @@ options( digits = 22 )
 
 banco_ibge_populacao <- read.csv( "ibge_populacao_bdd.csv", sep = "," )
 #banco_ibge_populacao <- subset( banco_ibge_populacao, ano == 2000 )
-banco_ibge_populacao <- banco_ibge_populacao %>% mutate( ln_pop = log( banco_ibge_populacao$populacao ) )
+banco_ibge_populacao$log_nat_pop <- log( banco_ibge_populacao$populacao )
 
 sprintf( "%.20f", small_banco_brollo[ 837, c( "pop" ) ] )
 
@@ -36,6 +36,31 @@ teste_media <- banco_ibge_populacao %>%
                        avg_0508 = case_when( ano >= 2004 & ano <= 2006 ~ mean( banco_ibge_populacao$populacao ) ) ) 
 
 which( banco_ibge_populacao == 697, arr.ind = TRUE )
+
+media_0104 <- banco_ibge_populacao_0104 %>% group_by( id_municipio ) %>% mutate( media_pop = mean( populacao ) )
+media_0104 <- subset( media_0104, populacao <= 60000 )
+media_0104 <- subset( media_0104, media_pop >= 6800 )
+media_0104 <- media_0104[ !duplicated( media_0104$id_municipio ), ] 
+
+media_0508 <- banco_ibge_populacao_0508 %>% group_by( id_municipio ) %>% mutate( media_pop = mean( populacao ) ) %>% subset( media_pop <= 60000 & media_pop >= 6800 )
+media_0508 <- media_0508[ !duplicated( media_0508$id_municipio ), ]
+
+media_0108 <- merge( media_0104, media_0508, all = TRUE )
+media_0108 <- media_0108 %>% mutate( ano = case_when( ano == 2000 ~ 2001,
+                                                      ano == 2004 ~ 2005 ) )
+colnames( media_0108 )[ colnames( media_0108 ) == "ano" ] <- "term"
+colnames( media_0108 )[ colnames( media_0108 ) == "pop" ] <- "newpop"
+
+media_0108$newpop <- round( media_0108$newpop )
+
+small_banco_brollo <- small_banco_brollo %>% mutate( newpop = round( pop ) )
+
+teste_brollo_ibge <- left_join( small_banco_brollo, media_0108[ , c( "newpop", "term", "id_municipio", "sigla_uf" ) ], by = c( "term", "newpop" ) )
+sum( is.na( teste_brollo_ibge$id_municipio ) )
+
+which( teste_brollo_ibge == 1100502, arr.ind = TRUE )
+
+teste_brollo_ibge[ c( 582, 754 ), c( "term", "newpop" ) ]
 
 # teste_media_0104 <- aggregate( banco_ibge_populacao_0104$populacao, list( banco_ibge_populacao_0104$id_municipio ), mean )
 # colnames( teste_media_0104 )[ colnames( teste_media_0104 ) == "Group.1" ] <- "id_municipio"
