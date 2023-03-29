@@ -12,13 +12,29 @@ library( plyr )
 library( ggplot2 )
 library( basedosdados )
 library( DescTools )
+library( purrr )
 
 #Sys.setlocale( "LC_ALL", "Portuguese_Brazil.1252" )
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/TSE" )
 setwd( "/media/kaique/Arquivos/Trabalho/Dissertacao/Datasets/TSE/" )
 
-# TSE BASEDOSDADOS
+### TSE SOURCE 2000, 2004, 2008, 2012 ###
+
+lista_eleicoes <- list( "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2000.zip",
+                        "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2004.zip",
+                        "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2008.zip",
+                        "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2012.zip" )
+
+lapply( lista_eleicoes, function( x ) { download.file( x, basename( x ) )
+                                        purrr::walk( basename( x ), ~ unzip( zipfile = basename( x ), 
+                                                     exdir = str_c( "", tools::file_path_sans_ext( .x ) ) ) ) } )
+
+
+
+### TSE SOURCE 2000, 2004, 2008, 2012 - FIM ###
+
+### TSE BASEDOSDADOS ###
 
 set_billing_id( "graphite-argon-368423" )
 query <- bdplyr("graphite-argon-368423.tse_candidatos_basedosdados.tse_candidatos_basedosdados")
@@ -100,6 +116,8 @@ write.csv( tse_bdd_municipios, "tse_bdd_municipios.csv" )
 tse_bdd_municipios <- read.csv( "tse_bdd_municipios.csv", sep = "," )
 
 sum( is.na( tse_bdd_municipios$Ideologia ) )
+
+### TSE BASEDOSDADOS - FIM ###
 
 #which( tse_bdd_municipios == 4119905, arr.ind = TRUE )
 #which( fpm == 4119905, arr.ind = TRUE )
