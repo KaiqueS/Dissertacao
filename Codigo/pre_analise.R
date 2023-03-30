@@ -20,9 +20,12 @@ municipios_sorteados_0138 <- municipios_sorteados_0138[ , -c( 1 ) ]
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/TSE" )
 
-tse_basedosdados <- read.csv( "tse_eleicoes_basedosdados.csv", sep = "," )
-tse_basedosdados <- subset( tse_basedosdados, cargo == "prefeito" )
-tse_basedosdados <- subset( tse_basedosdados, subset = ano == 2000 | ano == 2004 | ano == 2008 | ano == 2012 )
+# tse_basedosdados <- read.csv( "tse_eleicoes_basedosdados.csv", sep = "," )
+# tse_basedosdados <- subset( tse_basedosdados, cargo == "prefeito" )
+# tse_basedosdados <- subset( tse_basedosdados, subset = ano == 2000 | ano == 2004 | ano == 2008 | ano == 2012 )
+
+tse_source_00_08 <- read.csv( "eleicoes_00_08.csv", sep = "," )
+tse_source_00_08 <- tse_source_00_08[ , -1 ]
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/IBGE/" )
 
