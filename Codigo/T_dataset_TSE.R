@@ -132,96 +132,60 @@ rm( list = ls( ) )
 
 ### TSE BASEDOSDADOS ###
 
+# Candidatos
 set_billing_id( "graphite-argon-368423" )
-query <- bdplyr("graphite-argon-368423.tse_candidatos_basedosdados.tse_candidatos_basedosdados")
 
-df <- bd_collect(query)
-write.csv( df, "tse_eleicoes_basedosdados.csv" )
+candidatos_query <- bdplyr("graphite-argon-368423.tse_candidatos_basedosdados.tse_candidatos_basedosdados")
 
-tse_basedosdados <- read.csv( "tse_eleicoes_basedosdados.csv", sep = "," )
-#sum( is.na( tse_basedosdados ) )
-#tse_basedosdados <- na.omit( tse_basedosdados )
-tse_basedosdados <- subset( tse_basedosdados, cargo == "prefeito" )
-tse_basedosdados <- subset( tse_basedosdados, subset = ano == 2000 | ano == 2004 )
+df_candidatos <- bd_collect( candidatos_query )
+df_candidatos <- subset( df_candidatos, cargo == "prefeito" )
+df_candidatos <- subset( df_candidatos, subset = ano == 2000 | ano == 2004 | ano == 2008 | ano == 2012 )
 
-#tse_basedosdados <- tse_basedosdados[ complete.cases( tse_basedosdados ), ]
+colunas_df_candidatos <- c( "id_candidato_bd", "id_municipio", "id_municipio_tse", "sequencial" )
+df_candidatos[ colunas_df_candidatos ] <- sapply( df_candidatos[ colunas_df_candidatos ], as.numeric )
 
-colnames( tse_basedosdados )[ colnames( tse_basedosdados ) == "id_municipio" ] = "id_city_ibge"
-colnames( tse_basedosdados )[ colnames( tse_basedosdados ) == "ano" ] = "term"
+# write.csv( df_candidatos, "tse_candidatos_basedosdados.csv" )
 
-# Para porder fazer o join, como o banco de Brollo inclui datas que começam no ano em que
-# o candidato vencedor da eleição assume o mandato, modifiquei os anos obtidos aqui no
-# banco do TSE para corresponder aos anos do banco de Brollo
-tse_basedosdados <- tse_basedosdados %>% mutate( term = case_when( term == 2000 ~ 2001,
-                                                                   term == 2004 ~ 2005 ) )
+# Resultados Eleições Municipais
+resultados_query <- bdplyr( "graphite-argon-368423.tse_candidatos_basedosdados.bdd_tse_resultados_candidato_municipio" )
 
-# Problemas no term! Não tem anos 2000 no FPM, por isso dá NA
-#tse_bdd_municipios <- NULL
-tse_bdd_municipios <- left_join( tse_basedosdados, fpm[ , c( "id_city_ibge", "id_city_siafi", "Município", "term" ) ], by = c( "id_city_ibge", "term" ), all.x = T )
-tse_bdd_municipios <- subset( tse_bdd_municipios, situacao == "deferido" )
-#tse_bdd_municipios <- tse_bdd_municipios[ !duplicated( tse_bdd_municipios[ , c( "id_city_ibge" ) ] ), ]
-sum( is.na( tse_bdd_municipios$id_city_siafi ) )
+df_resultados <- bd_collect( resultados_query )
+df_resultados <- subset( df_resultados, cargo == "prefeito" )
+df_resultados <- subset( df_resultados, subset = ano == 2000 | ano == 2004 | ano == 2008 | ano == 2012 )
 
-# Agora: classificar os partidos em Esquerda e Direita usando Zucco e Power(2015), depois fazer isso usando
-# o trabalho de Bolognesi(2023) e ver a estabilidade dos resultados.
+colunas_df_resultados <- c( "id_candidato_bd", "id_municipio", "id_municipio_tse", "sequencial_candidato" )
+df_resultados[ colunas_df_resultados ] <- sapply( df_resultados[ colunas_df_resultados ], as.numeric )
 
-unique( tse_bdd_municipios$sigla_partido )
-sum( length( unique( tse_bdd_municipios$sigla_partido ) ) )
+match_candidato_resultado <- match( df_resultados$id_candidato_bd, df_candidatos$id_candidato_bd )
 
-# TODO: Adicionar uma coluna classificando os partidos entre Esquerda e Direita
-#       TALVEZ Esquerda-Centro-Direita! Conversar com Nara sobre. Usar Zucco e
-#       Power(2015) na classificação. Também usei Bolognesi(2023) -> DONE
+df_resultados[ 'nome' ] <- df_candidatos[ match_candidato_resultado, "nome" ]
+df_resultados[ 'nome_urna' ] <- df_candidatos[ match_candidato_resultado, "nome_urna" ]
+df_resultados[ 'sequencial_candidato' ] <- df_candidatos[ match_candidato_resultado, "sequencial" ]
 
-# NOTA: PPS -> Cidadania; PFL -> DEM; DEM + PSL -> UNIÃO; PT do B -> Avante; PSDC -> DC(2017);
-#       PRONA -> PL; PR -> PL; PST -> PL; PGT -> PL; PAN -> PTB; PSD -> PTB; PRN -> PTC -> AGIR(2022);
-#       PRP -> PATRIOTA; PSC -> PODEMOS(2022); PTN -> PODEMOS(2017); PHS - PODEMOS; PMDB -> MDB
-#       -----------> PRB -> REPUBLICANOS; PROS -> SOLIDARIEDADE(NÃO HOMOLOGADO); PPB( EXTINTO ) <--------- Não inclusos
-tse_bdd_municipios$sigla_partido <-  replace( tse_bdd_municipios$sigla_partido, tse_bdd_municipios$sigla_partido == "PPS", "CIDADANIA" )
-tse_bdd_municipios$sigla_partido <-  replace( tse_bdd_municipios$sigla_partido, tse_bdd_municipios$sigla_partido == "PT do B", "AVANTE" )
-tse_bdd_municipios$sigla_partido <-  replace( tse_bdd_municipios$sigla_partido, tse_bdd_municipios$sigla_partido == "PSDC", "DC" )
-tse_bdd_municipios$sigla_partido <-  replace( tse_bdd_municipios$sigla_partido, tse_bdd_municipios$sigla_partido == "PAN", "PTB" )
-tse_bdd_municipios$sigla_partido <-  replace( tse_bdd_municipios$sigla_partido, tse_bdd_municipios$sigla_partido == "PRP", "PATRIOTA" )
-tse_bdd_municipios$sigla_partido <-  replace( tse_bdd_municipios$sigla_partido, tse_bdd_municipios$sigla_partido == "PRN", "PTC" )
-tse_bdd_municipios$sigla_partido <-  replace( tse_bdd_municipios$sigla_partido, tse_bdd_municipios$sigla_partido == "PFL", "DEM" )
-tse_bdd_municipios$sigla_partido <-  replace( tse_bdd_municipios$sigla_partido, tse_bdd_municipios$sigla_partido == "PMDB", "MDB" )
-tse_bdd_municipios$sigla_partido <-  replace( tse_bdd_municipios$sigla_partido, tse_bdd_municipios$sigla_partido %in% c( "DEM", "PSL" ), "UNIÃO" )
-tse_bdd_municipios$sigla_partido <-  replace( tse_bdd_municipios$sigla_partido, tse_bdd_municipios$sigla_partido %in% c( "PRONA", "PR", "PST", "PGT" ), "PL" )
-tse_bdd_municipios$sigla_partido <-  replace( tse_bdd_municipios$sigla_partido, tse_bdd_municipios$sigla_partido %in% c( "PSC", "PTN", "PHS" ), "PODE" )
+df_resultados$sigla_partido <- replace( df_resultados$sigla_partido, df_resultados$sigla_partido == "PPS", "CIDADANIA" )
+df_resultados$sigla_partido <- replace( df_resultados$sigla_partido, df_resultados$sigla_partido == "PT do B", "AVANTE" )
+df_resultados$sigla_partido <- replace( df_resultados$sigla_partido, df_resultados$sigla_partido == "PSDC", "DC" )
+df_resultados$sigla_partido <- replace( df_resultados$sigla_partido, df_resultados$sigla_partido == "PAN", "PTB" )
+df_resultados$sigla_partido <- replace( df_resultados$sigla_partido, df_resultados$sigla_partido == "PRP", "PATRIOTA" )
+df_resultados$sigla_partido <- replace( df_resultados$sigla_partido, df_resultados$sigla_partido == "PRN", "PTC" )
+df_resultados$sigla_partido <- replace( df_resultados$sigla_partido, df_resultados$sigla_partido == "PFL", "DEM" )
+df_resultados$sigla_partido <- replace( df_resultados$sigla_partido, df_resultados$sigla_partido == "PMDB", "MDB" )
+df_resultados$sigla_partido <- replace( df_resultados$sigla_partido, df_resultados$sigla_partido %in% c( "DEM", "PSL" ), "UNIÃO" )
+df_resultados$sigla_partido <- replace( df_resultados$sigla_partido, df_resultados$sigla_partido %in% c( "PRONA", "PR", "PST", "PGT" ), "PL" )
+df_resultados$sigla_partido <- replace( df_resultados$sigla_partido, df_resultados$sigla_partido %in% c( "PSC", "PTN", "PHS" ), "PODE" )
 
-unique( tse_bdd_municipios$sigla_partido )
+# NOTA: Classificação dos partidos no espectro esquerda-direita de acordo com Bolognesi(2023).
+df_resultados <- df_resultados %>% mutate( Ideologia = case_when( sigla_partido %in% c( "PSTU", "PCO", "PCB", "PSOL", "PC do B", "PT" ) ~ "Esquerda",
+                                                                  sigla_partido %in% c( "PDT", "PSB", "CIDADANIA", "PV", "PTB" ) ~ "Centro",
+                                                                  sigla_partido %in% c( "AVANTE", "PMN", "MDB", "PSD", "PSDB", "PODE", "PRTB", "PROS",
+                                                                                        "PATRIOTA", "REPUBLICANOS", "PL", "PTC", "DC", "PP", "UNIÃO" ) ~ "Direita" ) )
 
-sum( is.na( tse_bdd_municipios$sigla_partido ) )
+# REMOÇÃO: PPB, o partido não mais existe.
+df_resultados <- subset( df_resultados, sigla_partido != "PPB" )
 
-# Zucco e Samuels(2013)
-#tse_bdd_municipios <- tse_bdd_municipios %>% mutate( Ideologia = case_when( sigla_partido %in% c( "PSOL", "PC do B", "PT" ) ~ "Esquerda",
-#                                                                            sigla_partido %in% c( "PDT", "PSB", "REDE", "CIDADANIA", "PV" ) ~ "Centro",
-#                                                                            sigla_partido %in% c( "PTB", "AVANTE", "PMN", "PMB", "MDB", "PSD", "PSDB", "PODE", "PROS", 
-#                                                                                                  "REPUBLICANOS", "PL", "PTC", "PP", "PSC", "UNIÃO", "PATRIOTA" ) ~ "Direita" ) )
-
-# Bolognesi(2023)
-tse_bdd_municipios <- tse_bdd_municipios %>% mutate( Ideologia = case_when( sigla_partido %in% c( "PSTU", "PCO", "PCB", "PSOL", "PC do B", "PT" ) ~ "Esquerda",
-                                                                            sigla_partido %in% c( "PDT", "PSB", "CIDADANIA", "PV", "PTB" ) ~ "Centro",
-                                                                            sigla_partido %in% c( "AVANTE", "PMN", "MDB", "PSD", "PSDB", "PODE", "PRTB", "PROS",
-                                                                                                  "PATRIOTA", "REPUBLICANOS", "PL", "PTC", "DC", "PP", "UNIÃO" ) ~ "Direita" ) )
-
-# NOTA: Removendo PPB, dado que o partido não existe mais
-tse_bdd_municipios <- subset( tse_bdd_municipios, sigla_partido != "PPB" )
-
-write.csv( tse_bdd_municipios, "tse_bdd_municipios.csv" )
-
-tse_bdd_municipios <- read.csv( "tse_bdd_municipios.csv", sep = "," )
-
-sum( is.na( tse_bdd_municipios$Ideologia ) )
+write.csv( df_resultados, "tse_resultados_bdd_00_12.csv" )
 
 ### TSE BASEDOSDADOS - FIM ###
-
-#which( tse_bdd_municipios == 4119905, arr.ind = TRUE )
-#which( fpm == 4119905, arr.ind = TRUE )
-
-#tse_bdd_municipios[ 6, ]
-#fpm[ 27717, ]
-
-#unique( tse_basedosdados$cargo )
 
 # Tirar todos que não são prefeitos
 # Pegar o banco de dados contendo informações sobre os municípios
@@ -232,7 +196,7 @@ sum( is.na( tse_bdd_municipios$Ideologia ) )
 
 # TODO: Talvez colunas para quantidade de votos em cada eleição? - Feito, mas checar se a totalização de votos está certa
 
-# TSE 2016 #
+### TSE 2016 - SOURCE ###
 
 # Ler banco, recodificar colunas de resultados e votos nominais, remover não prefeitos
 TSE_2016 <- read.csv( "TSE_2016.csv", sep = ";", encoding = "Portuguese_Brazil.1252" )
