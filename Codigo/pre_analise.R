@@ -20,12 +20,11 @@ municipios_sorteados_0138 <- municipios_sorteados_0138[ , -c( 1 ) ]
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/TSE" )
 
-# tse_basedosdados <- read.csv( "tse_eleicoes_basedosdados.csv", sep = "," )
-# tse_basedosdados <- subset( tse_basedosdados, cargo == "prefeito" )
-# tse_basedosdados <- subset( tse_basedosdados, subset = ano == 2000 | ano == 2004 | ano == 2008 | ano == 2012 )
+tse_basedosdados <- read.csv( "tse_resultados_bdd_00_12.csv", sep = "," )
+#tse_basedosdados <- subset( tse_basedosdados, subset = ano == 2000 | ano == 2004 | ano == 2008 | ano == 2012 )
 
-tse_source_00_08 <- read.csv( "eleicoes_00_08.csv", sep = "," )
-tse_source_00_08 <- tse_source_00_08[ , -1 ]
+# tse_source_00_08 <- read.csv( "eleicoes_00_08.csv", sep = "," )
+# tse_source_00_08 <- tse_source_00_08[ , -1 ]
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/IBGE/" )
 
@@ -37,9 +36,14 @@ match_codigosmun_tse <- match( codigos_municipios_ibge$`Código Município Compl
 codigos_municipios_ibge$sigla_uf <- tse_basedosdados[ c( match_codigosmun_tse ), "sigla_uf" ]
 
 municipios_sorteados_0138 <- left_join( municipios_sorteados_0138, codigos_municipios_ibge[ , c( "Código Município Completo", "sigla_uf", "Nome_Município" ) ], by = c( "uf" = "sigla_uf", "municipio" = "Nome_Município" ) )
-municipios_sorteados_0138$ano_eleicao <- municipios_sorteados_0138$year - ( municipios_sorteados_0138$year %% 4 )
 
-teste <- left_join( municipios_sorteados_0138, tse_basedosdados[ , c( "id_municipio", "nome_urna", "sigla_partido", "ano" ) ], by = c( "Código Município Completo" = "id_municipio", "ano_eleicao" = "ano" ) )
+# FIX: exemplo -> candidatos eleitos em 2004 só assumem em 2005, mas aqui aparecem como incumbentes
+municipios_sorteados_0138[ 'ano_eleicao' ] <- municipios_sorteados_0138$year - ( municipios_sorteados_0138$year %% 4 )
+
+teste <- left_join( municipios_sorteados_0138, tse_basedosdados[ , c( "id_municipio", "nome", "nome_urna", "sigla_partido", "ano", "Ideologia", "sigla_uf", "resultado" ) ], 
+                    by = c( "Código Município Completo" = "id_municipio", "ano_eleicao" = "ano", "uf" = "sigla_uf" ) )
+
+sum(is.na(teste$nome_urna))
 
 #sorteio_brollo <- subset( municipios_sorteados_0138, sorteio <= 29 )
 #sorteio_ferraz <- subset( municipios_sorteados_0138, sorteio >= 22 & sorteio <= 38 )
@@ -54,14 +58,40 @@ teste <- left_join( municipios_sorteados_0138, tse_basedosdados[ , c( "id_munici
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/IBGE/ibge_pop_censo_source/" )
 
-ibge_pop_source <- read.csv( "ibge_populacao_censo_2000.csv", sep = "," )
+ibge_pop_censo <- read.csv( "ibge_populacao_censo_2000.csv", sep = "," )
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/IBGE/ibge_source/" )
 
+ibge_pop <- read.csv( "ibge_0108.csv", sep = "," )
+
+ibge_media_0104 <- subset( ibge_pop, ano <= 2002 )
+ibge_media_0104[ 'media_pop' ] <- with( subset( ibge_pop, ano <= 2002 ), ave( populacao, id_city_ibge ) )
+ibge_media_0104 <- ibge_media_0104[ !duplicated( ibge_media_0104$id_city_ibge ), ]
+ibge_media_0104[ , "ano" ] <- 2001
+#ibge_media_0104$populacao <- round( ibge_media_0104$populacao )
+
+ibge_media_0508 <- subset( ibge_pop, ano >= 2004 )
+ibge_media_0508[ 'media_pop' ] <- with( subset( ibge_pop, ano >= 2004 ), ave( populacao, id_city_ibge ) )
+ibge_media_0508 <- ibge_media_0508[ !duplicated( ibge_media_0508$id_city_ibge ), ]
+ibge_media_0508[ , "ano" ] <- 2005
+
+# NOTA: eu tenho acesso aos FPM no banco de dados do Tesouro, posso usar pra dar join ou match
 setwd( "G:/Trabalho/Dissertacao/Datasets/Brollo/" )
 
 small_brollo <- read_dta( "AER_smallsample.dta" )
 
+brollo_2001 <- subset( small_brollo, term == 2001 )
+#brollo_2001$pop <- round( brollo_2001$pop )
+
+brollo_2005 <- subset( small_brollo, term == 2005 )
+
+teste <- match( brollo_2001$pop, ibge_pop$populacao )
+teste <- teste[ complete.cases( teste ) ]
+
 setwd( "G:/Trabalho/Dissertacao/Datasets/Ferraz/Stata/" )
+
+# NOTA: Adicionar População ao banco FPM, depois filtrar para populações entre 6800 e 60000
 setwd( "G:/Trabalho/Dissertacao/Datasets/TesouroN/" )
+
+
 

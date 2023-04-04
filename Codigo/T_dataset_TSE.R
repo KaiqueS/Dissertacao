@@ -183,6 +183,8 @@ df_resultados <- df_resultados %>% mutate( Ideologia = case_when( sigla_partido 
 # REMOÇÃO: PPB, o partido não mais existe.
 df_resultados <- subset( df_resultados, sigla_partido != "PPB" )
 
+# Falta fazer as colunas de reeleição. Para isso: separar os bancos por ano e juntar de dois em dois
+
 write.csv( df_resultados, "tse_resultados_bdd_00_12.csv" )
 
 ### TSE BASEDOSDADOS - FIM ###
