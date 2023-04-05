@@ -40,7 +40,7 @@ municipios_sorteados_0138 <- left_join( municipios_sorteados_0138, codigos_munic
 # FIX: exemplo -> candidatos eleitos em 2004 só assumem em 2005, mas aqui aparecem como incumbentes
 municipios_sorteados_0138[ 'ano_eleicao' ] <- municipios_sorteados_0138$year - ( municipios_sorteados_0138$year %% 4 )
 
-teste <- left_join( municipios_sorteados_0138, tse_basedosdados[ , c( "id_municipio", "nome", "nome_urna", "sigla_partido", "ano", "Ideologia", "sigla_uf", "resultado" ) ], 
+teste2 <- left_join( municipios_sorteados_0138, tse_basedosdados[ , c( "id_municipio", "nome", "nome_urna", "sigla_partido", "ano", "Ideologia", "sigla_uf", "resultado" ) ], 
                     by = c( "Código Município Completo" = "id_municipio", "ano_eleicao" = "ano", "uf" = "sigla_uf" ) )
 
 sum(is.na(teste$nome_urna))
@@ -55,6 +55,8 @@ sum(is.na(teste$nome_urna))
 # tse_ferraz <- subset( tse_ferraz, subset = ano == 2004 | ano == 2008 | ano == 2012 )
 
 # NOTA: os dados do TSE da BaseDosDados são horríveis. Tenho que raspar os dados direto do site do TSE.
+
+ibge_pop_bdd <- read.csv( "ibge_populacao_bdd.csv", sep = "," )
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/IBGE/ibge_pop_censo_source/" )
 
@@ -90,6 +92,43 @@ teste <- teste[ complete.cases( teste ) ]
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/Ferraz/Stata/" )
 
+ferraz_table1 <- read_dta( "table1.dta" )
+ferraz_table1[ 'round_lpop' ] <- round( log( ferraz_table1$pop ) )
+ferraz_table1$tx_analf18m <- ferraz_table1$tx_analf18m * 100
+
+ferraz_table2 <- read_dta( "table2.dta" )
+ferraz_table2[ 'round_lpop' ] <- round( ferraz_table2$lpop )
+ferraz_table2[ 'pop' ] <- round( exp( ferraz_table2$lpop ) )
+
+match_teste <- left_join( ferraz_table2, ferraz_table1, by = c( "gini", "tx_analf18m", "no_os", "treatment", "pop" ) )
+match_teste <- match_teste[ complete.cases( match_teste ), ]
+
+ibge_pop_ferraz <- match( ferraz_table2$pop, ibge_pop$populacao )
+ibge_pop_ferraz <- ibge_pop_ferraz[ complete.cases( ibge_pop_ferraz ) ]
+
+ibge_bdd_ferraz <- match( ferraz_table2$pop, ibge_pop_bdd$populacao )
+ibge_bdd_ferraz <- ibge_bdd_ferraz[ complete.cases( ibge_bdd_ferraz ) ]
+
+ibge_censo_ferraz <- match( ferraz_table2$pop, ibge_pop_censo$populacao )
+ibge_censo_ferraz <- ibge_censo_ferraz[ complete.cases( ibge_censo_ferraz ) ]
+
+ferraz_sorteios <- left_join( teste2, ibge_pop_bdd[ , c( "id_municipio", "populacao" ) ], by = c( "Código Município Completo" = "id_municipio" ) )
+
+agora_vai <- left_join( ferraz_table2, ferraz_sorteios[ , c( "populacao", "sorteio", "municipio", "uf", "Código Município Completo" , "nome", "sigla_partido", "Ideologia", "resultado" ) ], by = c( "pop" = "populacao", "sorteio" ) )
+agora_vai <- agora_vai[ complete.cases( agora_vai ), ]
+
+reg_lin <- lm( lfalha_total ~ Ideologia, data = agora_vai  )
+anova_model <- aov( lfalha_total ~ Ideologia, data = agora_vai )
+
+# TODO: fazer gráficos mostrando o número de partidos de esquerda-centro-direita no brasil ao longo dos períodos estudados
+#       e colocar no texto da dissertação
+# IDEIA: e se eu usar as pontuações dos partidos no espectro esquerda-direita, ao invés de ideologia como categoria?
+#        Acho que dá merda. O modelo pode considerar que há uma ordinalidade na variável.
+
+summary( reg_lin )
+summary( anova_model )
+
+plot( anova_model )
 # NOTA: Adicionar População ao banco FPM, depois filtrar para populações entre 6800 e 60000
 setwd( "G:/Trabalho/Dissertacao/Datasets/TesouroN/" )
 
