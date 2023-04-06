@@ -58,6 +58,17 @@ sum(is.na(teste$nome_urna))
 
 ibge_pop_bdd <- read.csv( "ibge_populacao_bdd.csv", sep = "," )
 
+# NOTA: Adicionar População ao banco FPM, depois filtrar para populações entre 6800 e 60000
+setwd( "G:/Trabalho/Dissertacao/Datasets/TesouroN/" )
+
+fpm <- read.csv( "fpm_2001_2008.csv", sep = ";", fileEncoding = "latin1" )
+# teste_fpm <- as.data.frame( gsub( "[^0-9,]", "", fpm$Valor.Consolidado ) )
+# teste_fpm$`gsub("[^0-9,]", "", fpm$Valor.Consolidado)` <- parse_number( teste_fpm$`gsub("[^0-9,]", "", fpm$Valor.Consolidado)`, locale = readr::locale( decimal_mark = "," ) )
+
+match_sorteios_fpm <- match( municipios_sorteados_0138$`Código Município Completo`, fpm$Código.IBGE )
+
+municipios_sorteados_0138[ 'codigo_siafi' ] <- fpm[ match_sorteios_fpm, "Código.SIAFI" ]
+
 setwd( "G:/Trabalho/Dissertacao/Datasets/IBGE/ibge_pop_censo_source/" )
 
 ibge_pop_censo <- read.csv( "ibge_populacao_censo_2000.csv", sep = "," )
@@ -80,7 +91,25 @@ ibge_media_0508[ , "ano" ] <- 2005
 # NOTA: eu tenho acesso aos FPM no banco de dados do Tesouro, posso usar pra dar join ou match
 setwd( "G:/Trabalho/Dissertacao/Datasets/Brollo/" )
 
+large_brollo <- read_dta( "AER_largesample.dta" )
 small_brollo <- read_dta( "AER_smallsample.dta" )
+
+small_large <- left_join( small_brollo[ , c( "term", "pop", "pop_2", "pop_3", "pop_cat", "fpm", "literacy", "urb", "broad", "narrow", "fraction_narrow", "fraction_broad" ) ],
+                          large_brollo[ , c( "term", "pop", "pop_2", "pop_3", "pop_cat", "fpm", "id_city", "uf", "regions" ) ],
+                          by = c( "term", "pop", "pop_2", "pop_3", "pop_cat", "fpm" ) )
+
+small_large <- small_large[ complete.cases( small_large ), ]
+small_large <- small_large[ !duplicated( small_large ), ]
+
+teste_sorteios_brollo <- left_join( small_large, teste2, by = c( "id_city" = "codigo_siafi" ) )
+teste_sorteios_brollo <- teste_sorteios_brollo[ complete.cases( teste_sorteios_brollo ), ] 
+
+model_brollo <- glm( broad ~ Ideologia + fpm + literacy, family = binomial( link = 'logit' ), data = teste_sorteios_brollo )
+
+lm_brollo <- lm( fraction_narrow ~ Ideologia + fpm + literacy, data = teste_sorteios_brollo )
+
+summary( model_brollo )
+summary( lm_brollo )
 
 brollo_2001 <- subset( small_brollo, term == 2001 )
 #brollo_2001$pop <- round( brollo_2001$pop )
@@ -129,8 +158,7 @@ summary( reg_lin )
 summary( anova_model )
 
 plot( anova_model )
-# NOTA: Adicionar População ao banco FPM, depois filtrar para populações entre 6800 e 60000
-setwd( "G:/Trabalho/Dissertacao/Datasets/TesouroN/" )
+
 
 
 
