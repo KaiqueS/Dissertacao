@@ -1,6 +1,6 @@
-library("readODS")
-library("tidyverse")
-library("readxl")
+library( "readODS" )
+library( "tidyverse" )
+library( "readxl" )
 library("foreign")
 library( "httr" )
 library( "xml2" )
@@ -12,6 +12,11 @@ library( plyr )
 library( basedosdados )
 library( DescTools )
 library( haven )
+library( lfe )
+library( fixest )
+
+### TODO: checar se no dataset derivado de Brollo os sorteios são os que ela usa no trabalho dela, i.e., sorteios 1-29
+### TODO: talvez usar a pontuação dos partidos em Bolognesi, ao invés de esquerda-centro-direita, só pra ver no que dá
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/Sorteios/" )
 
@@ -21,7 +26,7 @@ municipios_sorteados_0138 <- municipios_sorteados_0138[ , -c( 1 ) ]
 setwd( "G:/Trabalho/Dissertacao/Datasets/TSE" )
 
 tse_basedosdados <- read.csv( "tse_resultados_bdd_00_12.csv", sep = "," )
-#tse_basedosdados <- subset( tse_basedosdados, subset = ano == 2000 | ano == 2004 | ano == 2008 | ano == 2012 )
+# tse_basedosdados <- subset( tse_basedosdados, subset = ano == 2000 | ano == 2004 | ano == 2008 | ano == 2012 )
 
 # tse_source_00_08 <- read.csv( "eleicoes_00_08.csv", sep = "," )
 # tse_source_00_08 <- tse_source_00_08[ , -1 ]
@@ -41,7 +46,7 @@ municipios_sorteados_0138 <- left_join( municipios_sorteados_0138, codigos_munic
 municipios_sorteados_0138[ 'ano_eleicao' ] <- municipios_sorteados_0138$year - ( municipios_sorteados_0138$year %% 4 )
 
 teste2 <- left_join( municipios_sorteados_0138, tse_basedosdados[ , c( "id_municipio", "nome", "nome_urna", "sigla_partido", "ano", "Ideologia", "sigla_uf", "resultado" ) ], 
-                    by = c( "Código Município Completo" = "id_municipio", "ano_eleicao" = "ano", "uf" = "sigla_uf" ) )
+                     by = c( "Código Município Completo" = "id_municipio", "ano_eleicao" = "ano", "uf" = "sigla_uf" ) )
 
 sum(is.na(teste$nome_urna))
 
@@ -107,6 +112,10 @@ teste_sorteios_brollo <- teste_sorteios_brollo[ complete.cases( teste_sorteios_b
 model_brollo <- glm( broad ~ Ideologia + fpm + literacy, family = binomial( link = 'logit' ), data = teste_sorteios_brollo )
 
 lm_brollo <- lm( fraction_narrow ~ Ideologia + fpm + literacy, data = teste_sorteios_brollo )
+
+feols_brollo <- feols( fraction_narrow ~ Ideologia + fpm + literacy | municipio, teste_sorteios_brollo )
+
+summary( feols_brollo, vcov_cluster( "municipio" ) )
 
 summary( model_brollo )
 summary( lm_brollo )
