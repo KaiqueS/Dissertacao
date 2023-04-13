@@ -1,7 +1,7 @@
 library( "readODS" )
 library( "tidyverse" )
 library( "readxl" )
-library("foreign")
+library( "foreign" )
 library( "httr" )
 library( "xml2" )
 library( "rvest" )
@@ -17,6 +17,7 @@ library( fixest )
 
 ### TODO: checar se no dataset derivado de Brollo os sorteios são os que ela usa no trabalho dela, i.e., sorteios 1-29
 ### TODO: talvez usar a pontuação dos partidos em Bolognesi, ao invés de esquerda-centro-direita, só pra ver no que dá
+### TODO: termo interativo de Corrupção e Ideologia para explicar reeleição
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/Sorteios/" )
 
