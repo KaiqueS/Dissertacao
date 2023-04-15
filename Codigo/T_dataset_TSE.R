@@ -19,6 +19,7 @@ library( stringi )
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/TSE" )
 setwd( "/media/kaique/Arquivos/Trabalho/Dissertacao/Datasets/TSE/" )
+setwd( "E:/Trabalho/Dissertacao/Datasets/TSE/" )
 
 ### TSE SOURCE 2000, 2004, 2008, 2012 ###
 
@@ -182,6 +183,37 @@ df_resultados <- df_resultados %>% mutate( Ideologia = case_when( sigla_partido 
 
 # REMOÇÃO: PPB, o partido não mais existe.
 df_resultados <- subset( df_resultados, sigla_partido != "PPB" )
+
+teste <- df_resultados
+
+teste_00 <- subset( df_resultados, ano == 2000 )
+colnames( teste_00 )[ colnames( teste_00 ) == "resultado" ] <- "resultado_00"
+
+teste_04 <- subset( df_resultados, ano == 2004 )
+colnames( teste_04 )[ colnames( teste_04 ) == "resultado" ] <- "resultado_04"
+
+teste_08 <- subset( df_resultados, ano == 2008 )
+colnames( teste_08 )[ colnames( teste_08 ) == "resultado" ] <- "resultado_08"
+
+teste_12 <- subset( df_resultados, ano == 2012 )
+colnames( teste_12 )[ colnames( teste_12 ) == "resultado" ] <- "resultado_12"
+
+mergido <- Reduce( function( x, y ) merge( x, y, all = TRUE ), list( teste_00, teste_04, teste_08, teste_12 ) )
+
+mergido <- mergido %>% mutate( reeleito_04 = case_when( resultado_00 != "nao eleito" &
+                                                        resultado_04 != "nao eleito" ~ 1,
+                                                        resultado_00 != "nao eleito" &
+                                                        resultado_04 == "nao eleito" ~ 0 ),
+                               reeleito_08 = case_when( resultado_04 != "nao eleito" &
+                                                        resultado_08 != "nao eleito" ~ 1,
+                                                        resultado_04 != "nao eleito" &
+                                                        resultado_08 == "nao eleito" ~ 0 ),
+                               reeleito_12 = case_when( resultado_08 != "nao eleito" &
+                                                        resultado_12 != "nao eleito" ~ 1,
+                                                        resultado_08 != "nao eleito" &
+                                                        resultado_12 == "nao eleito" ~ 0 ) )
+
+unique( mergido$reeleito_04 )
 
 # Falta fazer as colunas de reeleição. Para isso: separar os bancos por ano e juntar de dois em dois
 
