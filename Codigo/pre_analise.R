@@ -46,9 +46,6 @@ municipios_sorteados_0138 <- left_join( municipios_sorteados_0138, codigos_munic
 # FIX: exemplo -> candidatos eleitos em 2004 só assumem em 2005, mas aqui aparecem como incumbentes
 municipios_sorteados_0138[ 'ano_eleicao' ] <- municipios_sorteados_0138$year - ( municipios_sorteados_0138$year %% 4 )
 
-teste2 <- left_join( municipios_sorteados_0138, tse_basedosdados[ , c( "id_municipio", "nome", "nome_urna", "sigla_partido", "ano", "Ideologia", "sigla_uf", "resultado" ) ], 
-                     by = c( "Código Município Completo" = "id_municipio", "ano_eleicao" = "ano", "uf" = "sigla_uf" ) )
-
 sum(is.na(teste$nome_urna))
 
 #sorteio_brollo <- subset( municipios_sorteados_0138, sorteio <= 29 )
@@ -75,24 +72,29 @@ match_sorteios_fpm <- match( municipios_sorteados_0138$`Código Município Compl
 
 municipios_sorteados_0138[ 'codigo_siafi' ] <- fpm[ match_sorteios_fpm, "Código.SIAFI" ]
 
-setwd( "G:/Trabalho/Dissertacao/Datasets/IBGE/ibge_pop_censo_source/" )
+teste2 <- left_join( municipios_sorteados_0138, tse_basedosdados[ , c( "id_municipio", "nome", "nome_urna", "sigla_partido", "Ideologia", "sigla_uf",
+                                                                       "resultado_00", "resultado_04", "resultado_08", "resultado_12", "reeleicao_04",
+                                                                       "reeleicao_08", "reeleicao_12" ) ], 
+                     by = c( "Código Município Completo" = "id_municipio", "uf" = "sigla_uf" ) )
 
-ibge_pop_censo <- read.csv( "ibge_populacao_censo_2000.csv", sep = "," )
-
+# setwd( "G:/Trabalho/Dissertacao/Datasets/IBGE/ibge_pop_censo_source/" )
+# 
+# ibge_pop_censo <- read.csv( "ibge_populacao_censo_2000.csv", sep = "," )
+# 
 setwd( "G:/Trabalho/Dissertacao/Datasets/IBGE/ibge_source/" )
-
+ 
 ibge_pop <- read.csv( "ibge_0108.csv", sep = "," )
-
-ibge_media_0104 <- subset( ibge_pop, ano <= 2002 )
-ibge_media_0104[ 'media_pop' ] <- with( subset( ibge_pop, ano <= 2002 ), ave( populacao, id_city_ibge ) )
-ibge_media_0104 <- ibge_media_0104[ !duplicated( ibge_media_0104$id_city_ibge ), ]
-ibge_media_0104[ , "ano" ] <- 2001
-#ibge_media_0104$populacao <- round( ibge_media_0104$populacao )
-
-ibge_media_0508 <- subset( ibge_pop, ano >= 2004 )
-ibge_media_0508[ 'media_pop' ] <- with( subset( ibge_pop, ano >= 2004 ), ave( populacao, id_city_ibge ) )
-ibge_media_0508 <- ibge_media_0508[ !duplicated( ibge_media_0508$id_city_ibge ), ]
-ibge_media_0508[ , "ano" ] <- 2005
+# 
+# ibge_media_0104 <- subset( ibge_pop, ano <= 2002 )
+# ibge_media_0104[ 'media_pop' ] <- with( subset( ibge_pop, ano <= 2002 ), ave( populacao, id_city_ibge ) )
+# ibge_media_0104 <- ibge_media_0104[ !duplicated( ibge_media_0104$id_city_ibge ), ]
+# ibge_media_0104[ , "ano" ] <- 2001
+# #ibge_media_0104$populacao <- round( ibge_media_0104$populacao )
+# 
+# ibge_media_0508 <- subset( ibge_pop, ano >= 2004 )
+# ibge_media_0508[ 'media_pop' ] <- with( subset( ibge_pop, ano >= 2004 ), ave( populacao, id_city_ibge ) )
+# ibge_media_0508 <- ibge_media_0508[ !duplicated( ibge_media_0508$id_city_ibge ), ]
+# ibge_media_0508[ , "ano" ] <- 2005
 
 # NOTA: eu tenho acesso aos FPM no banco de dados do Tesouro, posso usar pra dar join ou match
 setwd( "G:/Trabalho/Dissertacao/Datasets/Brollo/" )
@@ -100,7 +102,8 @@ setwd( "G:/Trabalho/Dissertacao/Datasets/Brollo/" )
 large_brollo <- read_dta( "AER_largesample.dta" )
 small_brollo <- read_dta( "AER_smallsample.dta" )
 
-small_large <- left_join( small_brollo[ , c( "term", "pop", "pop_2", "pop_3", "pop_cat", "fpm", "literacy", "urb", "broad", "narrow", "fraction_narrow", "fraction_broad" ) ],
+# ADD: "rerun" or "reelected"
+small_large <- left_join( small_brollo[ , c( "term", "pop", "pop_2", "pop_3", "pop_cat", "fpm", "literacy", "urb", "broad", "narrow", "fraction_narrow", "fraction_broad", "reelected" ) ],
                           large_brollo[ , c( "term", "pop", "pop_2", "pop_3", "pop_cat", "fpm", "id_city", "uf", "regions" ) ],
                           by = c( "term", "pop", "pop_2", "pop_3", "pop_cat", "fpm" ) )
 
@@ -108,9 +111,14 @@ small_large <- small_large[ complete.cases( small_large ), ]
 small_large <- small_large[ !duplicated( small_large ), ]
 
 teste_sorteios_brollo <- left_join( small_large, teste2, by = c( "id_city" = "codigo_siafi" ) )
+teste_sorteios_brollo <- subset( teste_sorteios_brollo, sorteio <= 29 )
 teste_sorteios_brollo <- teste_sorteios_brollo[ complete.cases( teste_sorteios_brollo ), ] 
 
-model_brollo <- glm( broad ~ Ideologia + fpm + literacy, family = binomial( link = 'logit' ), data = teste_sorteios_brollo )
+model_brollo <- glm( reelected ~ ( Ideologia * broad ) + fpm + literacy, family = binomial( link = 'logit' ), data = teste_sorteios_brollo )
+model_brollo_narrow <- glm( reelected ~ ( Ideologia * narrow ) + fpm + literacy, family = binomial( link = 'logit' ), data = teste_sorteios_brollo )
+
+model_brollo <- glm( reeleicao_12 ~ ( Ideologia * broad ) + fpm + literacy, family = binomial( link = 'logit' ), data = teste_sorteios_brollo )
+model_brollo_narrow <- glm( reeleicao_12 ~ ( Ideologia * narrow ) + fpm + literacy, family = binomial( link = 'logit' ), data = teste_sorteios_brollo )
 
 lm_brollo <- lm( fraction_narrow ~ Ideologia + fpm + literacy, data = teste_sorteios_brollo )
 
@@ -119,6 +127,7 @@ feols_brollo <- feols( fraction_narrow ~ Ideologia + fpm + literacy | municipio,
 summary( feols_brollo, vcov_cluster( "municipio" ) )
 
 summary( model_brollo )
+summary( model_brollo_narrow )
 summary( lm_brollo )
 
 brollo_2001 <- subset( small_brollo, term == 2001 )
@@ -153,10 +162,14 @@ ibge_censo_ferraz <- ibge_censo_ferraz[ complete.cases( ibge_censo_ferraz ) ]
 
 ferraz_sorteios <- left_join( teste2, ibge_pop_bdd[ , c( "id_municipio", "populacao" ) ], by = c( "Código Município Completo" = "id_municipio" ) )
 
-agora_vai <- left_join( ferraz_table2, ferraz_sorteios[ , c( "populacao", "sorteio", "municipio", "uf", "Código Município Completo" , "nome", "sigla_partido", "Ideologia", "resultado" ) ], by = c( "pop" = "populacao", "sorteio" ) )
+agora_vai <- left_join( ferraz_table2, ferraz_sorteios[ , c( "populacao", "sorteio", "municipio", "uf", "Código Município Completo" , "nome", "sigla_partido", "Ideologia",
+                                                             "resultado_00", "resultado_04", "resultado_08", "resultado_12", "reeleicao_04",
+                                                             "reeleicao_08", "reeleicao_12" ) ],
+                        by = c( "pop" = "populacao", "sorteio" ) )
+
 agora_vai <- agora_vai[ complete.cases( agora_vai ), ]
 
-reg_lin <- lm( lfalha_total ~ Ideologia, data = agora_vai  )
+reg_lin <- lm( reeleicao_12 ~ ( Ideologia * lfalha_total ) + gini + tx_analf18m, data = agora_vai  )
 anova_model <- aov( lfalha_total ~ Ideologia, data = agora_vai )
 
 # TODO: fazer gráficos mostrando o número de partidos de esquerda-centro-direita no brasil ao longo dos períodos estudados

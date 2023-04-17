@@ -186,43 +186,34 @@ df_resultados <- subset( df_resultados, sigla_partido != "PPB" )
 
 # df_resultados <- read.csv( "tse_resultados_bdd_00_12.csv", sep = "," )
 
-teste <- df_resultados %>% mutate( resultado_00 = case_when( ano == 2000 ~ resultado ),
-                                   resultado_04 = case_when( ano == 2004 ~ resultado ),
-                                   resultado_08 = case_when( ano == 2008 ~ resultado ),
-                                   resultado_12 = case_when( ano == 2012 ~ resultado ) )
+df_resultados <- df_resultados[ !duplicated( df_resultados$nome ), -which( names( df_resultados ) %in% c( "ano", "resultado" ) ) ]
 
 # TODO: criar um banco para cada eleição para depois juntá-los em um único com a época do resultado obtido pelo candidato
 resultados_00 <- subset( df_resultados, ano == 2000 )
 colnames( resultados_00 )[ colnames( resultados_00 ) == "resultado" ] <- "resultado_00"
+match_00 <- match( df_resultados$id_candidato_bd, resultados_00$id_candidato_bd )
 
 resultados_04 <- subset( df_resultados, ano == 2004 )
 colnames( resultados_04 )[ colnames( resultados_04 ) == "resultado" ] <- "resultado_04"
+match_04 <- match( df_resultados$id_candidato_bd, resultados_04$id_candidato_bd )
 
 resultados_08 <- subset( df_resultados, ano == 2008 )
 colnames( resultados_08 )[ colnames( resultados_08 ) == "resultado" ] <- "resultado_08"
+match_08 <- match( df_resultados$id_candidato_bd, resultados_08$id_candidato_bd )
 
 resultados_12 <- subset( df_resultados, ano == 2012 )
 colnames( resultados_12 )[ colnames( resultados_12 ) == "resultado" ] <- "resultado_12"
+match_12 <- match( df_resultados$id_candidato_bd, resultados_12$id_candidato_bd )
 
-resultados_0004 <- c( resultados_00, resultados_04 ) %>% 
-                      mutate( reeleicao_04 = case_when( ( resultados_00$nome == resultados_04$nome &
-                                                          resultados_00$resultado_00 != "nao eleito" &
-                                                          resultados_04$resultado_04 != "nao eleito" ) ~ 1,
-                                                          TRUE ~ 0 ) )
-
-resultados_0004 <- left_join( resultados_04, resultados_00[ , c( 2:18 ) ], 
-                              by = c( colnames( resultados_00[ , 2:18 ] ) ) )
-
-teste <- Reduce( function( x, y ) merge( x, y, by = c( "nome", "id_candidato_bd" ) ), list( resultados_00, resultados_04, resultados_08, resultados_12 ) )
+df_resultados[ "resultado_00" ] <- resultados_00[ match_00, "resultado_00" ]
+df_resultados[ "resultado_04" ] <- resultados_04[ match_04, "resultado_04" ]
+df_resultados[ "resultado_08" ] <- resultados_08[ match_08, "resultado_08" ]
+df_resultados[ "resultado_12" ] <- resultados_12[ match_12, "resultado_12" ]
 
 # Não vai dar certo porque os resultados estão em linhas diferentes para cada coluna.
-teste <- df_resultados %>% group_by( nome ) %>%  mutate( reeleicao_04 = case_when( resultado_00 != "nao eleito" & resultado_04 != "nao eleito" ~ 1, resultado_00 != "nao eleito" & resultado_04 == "nao eleito" ~ 0 ),
-                                                         reeleicao_08 = case_when( resultado_04 != "nao eleito" & resultado_08 != "nao eleito" ~ 1, resultado_04 != "nao eleito" & resultado_08 == "nao eleito" ~ 0 ),
-                                                         reeleicao_12 = case_when( resultado_08 != "nao eleito" & resultado_12 != "nao eleito" ~ 1, resultado_08 != "nao eleito" & resultado_12 == "nao eleito" ~ 0 ) )
-
-teste$resultado_00[ 51845 ] == "nao eleito"
-
-# Falta fazer as colunas de reeleição. Para isso: separar os bancos por ano e juntar de dois em dois
+df_resultados <- df_resultados %>% mutate( reeleicao_04 = case_when( resultado_00 != "nao eleito" & resultado_04 != "nao eleito" ~ 1, resultado_00 != "nao eleito" & resultado_04 == "nao eleito" ~ 0 ),
+                                           reeleicao_08 = case_when( resultado_04 != "nao eleito" & resultado_08 != "nao eleito" ~ 1, resultado_04 != "nao eleito" & resultado_08 == "nao eleito" ~ 0 ),
+                                           reeleicao_12 = case_when( resultado_08 != "nao eleito" & resultado_12 != "nao eleito" ~ 1, resultado_08 != "nao eleito" & resultado_12 == "nao eleito" ~ 0 ) )
 
 write.csv( df_resultados, "tse_resultados_bdd_00_12.csv" )
 
