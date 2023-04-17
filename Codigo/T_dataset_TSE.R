@@ -19,6 +19,7 @@ library( stringi )
 
 setwd( "G:/Trabalho/Dissertacao/Datasets/TSE" )
 setwd( "/media/kaique/Arquivos/Trabalho/Dissertacao/Datasets/TSE/" )
+setwd( "E:/Trabalho/Dissertacao/Datasets/TSE/" )
 
 ### TSE SOURCE 2000, 2004, 2008, 2012 ###
 
@@ -202,6 +203,15 @@ colnames( resultados_08 )[ colnames( resultados_08 ) == "resultado" ] <- "result
 
 resultados_12 <- subset( df_resultados, ano == 2012 )
 colnames( resultados_12 )[ colnames( resultados_12 ) == "resultado" ] <- "resultado_12"
+
+resultados_0004 <- c( resultados_00, resultados_04 ) %>% 
+                      mutate( reeleicao_04 = case_when( ( resultados_00$nome == resultados_04$nome &
+                                                          resultados_00$resultado_00 != "nao eleito" &
+                                                          resultados_04$resultado_04 != "nao eleito" ) ~ 1,
+                                                          TRUE ~ 0 ) )
+
+resultados_0004 <- left_join( resultados_04, resultados_00[ , c( 2:18 ) ], 
+                              by = c( colnames( resultados_00[ , 2:18 ] ) ) )
 
 teste <- Reduce( function( x, y ) merge( x, y, by = c( "nome", "id_candidato_bd" ) ), list( resultados_00, resultados_04, resultados_08, resultados_12 ) )
 
