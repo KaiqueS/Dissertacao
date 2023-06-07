@@ -1,11 +1,812 @@
-\documentclass{ abntex2 }
+\documentclass[
+	% -- opções da classe memoir --
+	12pt,				% tamanho da fonte
+	openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
+	twoside,			% para impressão em recto e verso. Oposto a oneside
+	a4paper,			% tamanho do papel. 
+	openany,
+	% -- opções da classe abntex2 --
+	%chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
+	%section=TITLE,		% títulos de seções convertidos em letras maiúsculas
+	%subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
+	%subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
+	% -- opções do pacote babel --
+	english,			% idioma adicional para hifenização
+	brazil				% o último idioma é o principal do documento
+	]{abntex2}
 
-\usepackage{ babel }
+% ---
+% Pacotes básicos 
+% ---
+\usepackage{lmodern}			% Usa a fonte Latin Modern			
+\usepackage[T1]{fontenc}		% Selecao de codigos de fonte.
+\usepackage[utf8]{inputenc}		% Codificacao do documento (conversão automática dos acentos)
+\usepackage{indentfirst}		% Indenta o primeiro parágrafo de cada seção.
+\usepackage{color}				% Controle das cores
+\usepackage{graphicx}			% Inclusão de gráficos
+\usepackage{microtype} 			% para melhorias de justificação
+\usepackage{pdfcomment}
+\usepackage[alf]{abntex2cite}
+\usepackage[export]{adjustbox}
+\usepackage{capt-of}
 
-\title{ Corrupção: Explorando Brechas Institucionais }
+\bibliographystyle{abntex2-alf}
 
-\begin{ document}
-     
-    \maketitle
 
-\end{ document }
+
+% ---
+		
+% ---
+% Pacotes adicionais, usados apenas no âmbito do Modelo Canônico do abnteX2
+% ---
+%\usepackage{lipsum}				% para geração de dummy text
+
+% ---
+\titulo{Ideologia, Corrupção e Accountability Eleitoral}
+\autor{Kaíque Pereira Santos}
+\local{Brasil}
+\data{2023, }
+\orientador{Nara Pavão}
+
+\instituicao{%
+  Universidade Federal de Pernambuco - UFPE
+  \par
+Departamento de Ciência Política
+  \par
+  Programa de Pós-Graduação em Ciência Política}
+\tipotrabalho{Dissertação de Mestrado}
+% O preambulo deve conter o tipo do trabalho, o objetivo, 
+% o nome da instituição e a área de concentração 
+\preambulo{Dissertação de mestrado, requerida para a conclusão do curso de mestrado em Ciência Política, ministrado no Programa da Pós-Graduação em Ciência Política da Universidade Federal de Pernambuco}
+% ---
+
+
+% ---
+% Configurações de aparência do PDF final
+
+% alterando o aspecto da cor azul
+\definecolor{blue}{RGB}{41,5,195}
+
+% informações do PDF
+\makeatletter
+\hypersetup{
+     	%pagebackref=true,
+		pdftitle={\@title}, 
+		pdfauthor={\@author},
+    	pdfsubject={\imprimirpreambulo},
+	    pdfcreator={LaTeX with abnTeX2},
+		pdfkeywords={abnt}{latex}{abntex}{abntex2}{trabalho acadêmico}, 
+		colorlinks=true,       		% false: boxed links; true: colored links
+    	linkcolor=blue,          	% color of internal links
+    	citecolor=blue,        		% color of links to bibliography
+    	filecolor=magenta,      		% color of file links
+		urlcolor=blue,
+		bookmarksdepth=4
+}
+\makeatother
+% --- 
+
+% ---
+% Posiciona figuras e tabelas no topo da página quando adicionadas sozinhas
+% em um página em branco. Ver https://github.com/abntex/abntex2/issues/170
+\makeatletter
+\setlength{\@fptop}{5pt} % Set distance from top of page to first float
+\makeatother
+% ---
+
+% ---
+% Possibilita criação de Quadros e Lista de quadros.
+% Ver https://github.com/abntex/abntex2/issues/176
+%
+\newcommand{\quadroname}{Quadro}
+\newcommand{\listofquadrosname}{Lista de quadros}
+
+\newfloat[chapter]{quadro}{loq}{\quadroname}
+\newlistof{listofquadros}{loq}{\listofquadrosname}
+\newlistentry{quadro}{loq}{0}
+
+% configurações para atender às regras da ABNT
+\setfloatadjustment{quadro}{\centering}
+\counterwithout{quadro}{chapter}
+\renewcommand{\cftquadroname}{\quadroname\space} 
+\renewcommand*{\cftquadroaftersnum}{\hfill--\hfill}
+
+\setfloatlocations{quadro}{hbtp} % Ver https://github.com/abntex/abntex2/issues/176
+% ---
+
+% --- 
+% Espaçamentos entre linhas e parágrafos 
+% --- 
+
+% O tamanho do parágrafo é dado por:
+\setlength{\parindent}{1.3cm}
+
+% Controle do espaçamento entre um parágrafo e outro:
+\setlength{\parskip}{0.2cm}  % tente também \onelineskip
+
+% ---
+% compila o indice
+% ---
+\makeindex
+% ---
+
+% ----
+% Início do documento
+% ----
+\include{abntex2-modelo-include-comandos}
+
+\begin{document}
+
+% Seleciona o idioma do documento (conforme pacotes do babel)
+%\selectlanguage{english}
+\selectlanguage{brazil}
+
+% Retira espaço extra obsoleto entre as frases.
+\frenchspacing 
+
+% ----------------------------------------------------------
+% ELEMENTOS PRÉ-TEXTUAIS
+% ----------------------------------------------------------
+% \pretextual
+
+% ---
+% Capa
+% ---
+\imprimircapa
+% ---
+
+% ---
+% Folha de rosto
+% (o * indica que haverá a ficha bibliográfica)
+% ---
+\imprimirfolhaderosto*
+% ---
+
+% ---
+% Inserir a ficha bibliografica
+% ---
+
+% Isto é um exemplo de Ficha Catalográfica, ou ``Dados internacionais de
+% catalogação-na-publicação''. Você pode utilizar este modelo como referência. 
+% Porém, provavelmente a biblioteca da sua universidade lhe fornecerá um PDF
+% com a ficha catalográfica definitiva após a defesa do trabalho. Quando estiver
+% com o documento, salve-o como PDF no diretório do seu projeto e substitua todo
+% o conteúdo de implementação deste arquivo pelo comando abaixo:
+%
+% \begin{fichacatalografica}
+%     \includepdf{fig_ficha_catalografica.pdf}
+% \end{fichacatalografica}
+
+\begin{fichacatalografica}
+	\sffamily
+	\vspace*{\fill}					% Posição vertical
+	\begin{center}					% Minipage Centralizado
+	\fbox{\begin{minipage}[c][8cm]{13.5cm}		% Largura
+	\small
+	\imprimirautor
+	%Sobrenome, Nome do autor
+	
+	\hspace{0.5cm} \imprimirtitulo  / \imprimirautor. --
+	\imprimirlocal, \imprimirdata-
+	
+	\hspace{0.5cm} \thelastpage p. : il. (algumas color.) ; 30 cm.\\
+	
+	\hspace{0.5cm} \imprimirorientadorRotulo~\imprimirorientador\\
+	
+	\hspace{0.5cm}
+	\parbox[t]{\textwidth}{\imprimirtipotrabalho~--~\imprimirinstituicao,
+	\imprimirdata.}\\
+	
+	\hspace{0.5cm}
+		1. Corrupção.
+		2. Eleições.
+		2. Performance eleitoral.
+		I. Orientadora: Nara Pavão.
+		II. Universidade Federal de Pernambuco.
+		III. Programa de Pós-Graduação em Ciência Política.
+		IV. Parcialidade, Corrupção e Accountability Eleitoral 			
+	\end{minipage}}
+	\end{center}
+\end{fichacatalografica}
+% ---
+
+% ---
+% Inserir errata
+% ---
+
+% ---
+
+% ---
+% Inserir folha de aprovação
+% ---
+
+% Isto é um exemplo de Folha de aprovação, elemento obrigatório da NBR
+% 14724/2011 (seção 4.2.1.3). Você pode utilizar este modelo até a aprovação
+% do trabalho. Após isso, substitua todo o conteúdo deste arquivo por uma
+% imagem da página assinada pela banca com o comando abaixo:
+%
+% \begin{folhadeaprovacao}
+% \includepdf{folhadeaprovacao_final.pdf}
+% \end{folhadeaprovacao}
+%
+\begin{folhadeaprovacao}
+
+  \begin{center}
+    {\ABNTEXchapterfont\large\imprimirautor}
+
+    \vspace*{\fill}\vspace*{\fill}
+    \begin{center}
+      \ABNTEXchapterfont\bfseries\Large\imprimirtitulo
+    \end{center}
+    \vspace*{\fill}
+    
+    \hspace{.45\textwidth}
+    \begin{minipage}{.5\textwidth}
+        \imprimirpreambulo
+    \end{minipage}%
+    \vspace*{\fill}
+   \end{center}
+        
+   Trabalho aprovado. \imprimirlocal, de 2023:
+
+   \assinatura{\textbf{\imprimirorientador} \\ Orientador} 
+   \assinatura{\textbf{Professor} \\ Convidado 1}
+   \assinatura{\textbf{Professor} \\ Convidado 2}
+   %\assinatura{\textbf{Professor} \\ Convidado 3}
+   %\assinatura{\textbf{Professor} \\ Convidado 4}
+      
+   \begin{center}
+    \vspace*{0.5cm}
+    {\large\imprimirlocal}
+    \par
+    {\large\imprimirdata}
+    \vspace*{1cm}
+  \end{center}
+  
+\end{folhadeaprovacao}
+
+% ---
+% Agradecimentos
+% ---
+\begin{agradecimentos}
+Gostaria de agradecer, primeiramente, à minha família, por todo o apoio emocional e financeiro, sem os quais eu não conseguiria ter procedido com os estudos no mestrado. Aos meus amigos, por todo suporte e incentivos dados para que eu permanecesse motivado com o curso. Por fim, também agradeço à minha orientadora, dada, principalmente, toda a paciência e compreensão que a mesma teve comigo nesse interim.
+
+\end{agradecimentos}
+% ---
+
+% ---
+% Epígrafe
+% ---
+\begin{epigrafe}
+    \vspace*{\fill}
+	\begin{flushright}
+		
+		\textit{Epígrafe}
+
+	\end{flushright}
+\end{epigrafe}
+% ---
+
+% ---
+% RESUMOS
+% ---
+
+% resumo em português
+\setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
+\begin{resumo}
+
+No presente trabalho, pretende-se dar continuidade à pesquisa de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) sobre o efeito, no comportamento do eleitorado, causado pela exposição de casos de corrupção que aconteceram nos municípios brasileiros. Os autores~\cite{ferraz2008exposing} descobriram que fornecer ao público eleitoral informações sobre infrações administrativas observadas nas auditorias realizadas pela Controladoria Geral da União afeta negativamente a performance eleitoral dos candidatos acusados de corrupção. Entretanto, como mostrado por \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}), \cite{dunning2019voter} e \citeauthoronline{Boas2019Apr}~(\citeyear{Boas2019Apr}), existem vários fatores distintos que podem afetar o comportamento dos eleitores, de modo que haja variação no grau da punição encontrado por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}).
+Aqui, pretendemos verificar se o efeito da exposição dos casos de corrupção varia de acordo com o posicionamento ideológico dos candidatos. Ou seja, há diferença no grau com que os candidatos de partidos políticos de esquerda ou direita são punidos, ou ambos seriam punidos igualmente? Para isso, usaremos os dados de Brollo et. al.(2013), que é constituído por informações atualizadas do banco usado por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), em conjunto com a classificação ideológica dos partidos, fornecida por \citeauthoronline{Bolognesi2022Sep}~(\citeyear{Bolognesi2022Sep}), para testar a hipótese de que não há uma relação direta entre o posicionamento ideológico dos políticos e o grau com o qual os candidatos dos mesmos são punidos após cometerem alguma infração e terem tais crimes expostos.
+
+\textbf{Palavras-chave}: Corrupção; eleições; performance eleitoral; ideologia.
+
+\end{resumo}
+
+% resumo em inglês
+\begin{resumo}[Abstract]
+	
+	\begin{otherlanguage*}{english}
+		
+In the current thesis, we will follow from Ferraz and Finan's(2008) work on the effects, on voters' behavior, caused by the exposure of cases of corruption on brazilian municipalities. The authors(FERRAZ and FINAN, 2008) found that providing voters information about administrative misbehavior uncovered on audits conducted by the Controladoria Geral da União affects negatively the electoral performance of candidates found to be guilty. However, as argued by \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}), \cite{dunning2019voter}, and Boas, Hidalgo, and Melo(2018), there are more factors that could change how voters will react to this exposure, which, in turn, could affect the effects observed by Ferraz and Finan(2008) with respect to how thoroughly punishments are imposed.
+Here, we intend to check if the effect of exposing cases of corruption varies accordingly to the ideology of politicians. In other words, are politicians from left or right wing political parties punished differently, or are both sides equally taken into account? To do so, we will use the dataset from Brollo et. al.(2013), which is an updated version of the dataset used by Ferraz and Finan(2008), along with Bolognesi, Ribeiro, and Codato's(2022) ideological classification of brazilian political parties, to test the hypothesis that there is not a direct relationship between politicians' ideological orientation and how severily its candidates are punished after found guilty of corruption.
+	
+\textbf{Keywords}: Corruption; elections; electoral performance; ideology.
+   
+	\end{otherlanguage*}
+
+\end{resumo}
+
+\pdfbookmark[0]{\listfigurename}{lof}
+%\listoffigures*
+\cleardoublepage
+
+\pdfbookmark[0]{\listofquadrosname}{loq}
+%\listofquadros*
+\cleardoublepage
+
+\pdfbookmark[0]{\listtablename}{lot}
+%\listoftables*
+\cleardoublepage
+
+%\begin{siglas}
+%\end{siglas}
+
+%\begin{simbolos}
+%\end{simbolos}
+
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+\cleardoublepage
+
+\textual
+
+
+
+\chapter{Introdução}
+
+% -------------------->>>>>>>>>>>>> LEMBRAR DE QUEBRAR OS PARAGRÁFOS EM PARTES MENORES <<<<<<<<<<<<<-------------------------------
+
+Qual a extensão dos efeitos das parcialidades, ideologia e arbitrariedades individuais sobre o \textit{accountability} eleitoral? Até onde nossa capacidade de punir ou contestar atitudes e posturas de terceiros é afetada pelas semelhanças nos interesses, proximidades nos posicionamentos ideológicos, ou compatibilidade nas preferências que temos em comum para com os mesmos? Por último: a resposta obtida se mantém a mesma quando o comportamento, praticado por terceiros, a ser punido for comprovadamente errado, para além de qualquer dúvida, ou existiria um ponto onde a factualidade dos erros supera qualquer tipo de parcialidade individual, de modo que a pessoa sente ser injustificável não contestar a infração?
+
+A pergunta é motivada pelo fato de que a corrupção é um problema reconhecido nas burocracias ao redor mundo~\cite{Rose-Ackerman1996Sep}, e que, apesar do mencionado reconhecimento, ainda assim permanece extremamente difícil de ser estudado, dado aos fatos de que, além de haver problemas com a conceitualização~\cite{bussell2015typologies}, é também de difícil operacionalização e, consequentemente, torna problemática quaisquer tentativas de mensurá-la~\cite{bussell2015typologies}, dificuldades que são intensificadas pelo fato de que os casos de corrupção não necessariamente acontecem de maneira evidente, fazendo com que apenas tomemos conhecimento dos mesmos se e quando estes são descobertos. Porém, mesmo quando crimes são expostos, segundo \citeauthoronline{bussell2015typologies}~(\citeyear{bussell2015typologies}), ainda há o problema de identificar a qual forma de corrupção os casos descobertos estão associados.
+
+No presente trabalho, pretende-se complementar as pesquisas sobre \textit{accountability} eleitoral feitas por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), \citeauthoronline{Avis2018Oct}~(\citeyear{Avis2018Oct}), \citeauthoronline{Boas2019Apr}~(\citeyear{Boas2019Apr}) e \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}). Mais especificamente, tentamos obter respostas para as perguntas apresentadas no parágrafo inicial analisando os potenciais efeitos que o posicionamento ideológico dos candidatos tem sobre comportamento dos eleitores. E, para isso, o argumento construído aqui neste trabalho será dividido em algumas partes.
+
+Na primeira parte, será feita uma breve apresentação das pesquisas feitas sobre as definições de corrupção, os problemas causados por esta e, por fim, sobre o que é \textit{accountability} eleitoral. No que diz respeito a este último tópico, os principais trabalhos a serem apresentados foram feitos por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) e \citeauthoronline{Avis2018Oct}~(\citeyear{Avis2018Oct}), os quais exploram o grau da punição eleitoral sofrida pelos prefeitos incriminados por práticas de corrupção. Os autores~\cite{ferraz2008exposing, Avis2018Oct} obtiveram resultados nos quais foi mostrado que estes políticos corruptos foram sim punidos eleitoralmente, desde que os casos de corrupção, os quais foram descobertos em auditorias realizadas pela Controladoria Geral da União, fossem devidamente noticiados para a população de interesse. Entretanto, na década que se segue o trabalho de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), surgiram trabalhos que exploravam as limitações da corrupção como fator capaz de provocar \textit{accountability} eleitoral. Discutiremos sobre um dos trabalhos que serve como contraponto à pesquisa mencionada~\cite{ferraz2008exposing}, qual seja, os achados de \cite{dunning2019voter}, os quais realizaram uma meta-análise dos resultados de experimentos por eles conduzidos, nos quais tentam explorar os efeitos que campanhas de difusão de informações sobre políticos e partidos tem sobre o comportamento do eleitorado. \cite{dunning2019voter} obtém achados que conflitam em algum grau com os resultados de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), indicando, potencialmente, que a questão do \textit{accountability} eleitoral não foi exaurida no trabalho de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}).
+
+%% TEM UMA DESCONEXÃO AQUI ENTRE POLARIZAÇÃO E PARTIDARISMO ---------------------------
+
+Em seguida, e justamente por causa dos achados de \cite{dunning2019voter}, serão apresentados e discutidos trabalhos acerca de partidarismo e polarização política. Segundo \citeauthoronline{Bednar2021Dec}~(\citeyear{Bednar2021Dec}), as formas presentes de polarização afetam o comportamento dos indivíduos, e como polarização está relacionada à ideologia, entendê-la poderia nos ajudar a compreender os efeitos que o posicionamento ideológico e as preferências individuais tem sobre nossa capacidade punitiva ou recompensatória, pelo menos no que diz respeito à atitudes e pessoas cujo comportamento deveríamos constantemente policiar. O intuito é justamente expor os achados da literatura sobre se temos tendências a aumentar ou diminuir a importância de um acontecimento ou ação de acordo com nosso alinhamento ou interesse pessoal para com esses, ou se, pelo contrário, agimos sempre com imparcialidade. Ou seja: punimos excessivamente as atitudes de pessoas que consideramos como membros de um grupo que nos faz oposição? Penalizamos menos erros de pessoas com as quais concordamos? Aqui, as principais referências são \citeauthoronline{Boas2019Apr}~(\citeyear{Boas2019Apr}) e \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}), nos quais são exploradas as condições que levam à prática de \textit{accountability} por parte dos eleitores e, caso realmente haja punição, se ela é exercida igualmente sobre diferentes tipos de infração.
+
+%%--------------------------------------------------------
+
+Valeriam, os achados acima, para os casos em que políticos corruptos foram expostos? Seria a punição eleitoral afetada pelo posicionamento ideológico dos candidatos? I.e., os eleitores tendem a punir mais os políticos cuja ideologia está restrita a um dos lados do espectro ideológico, ou tanto candidatos de esquerda quanto os de direita são igualmente punidos?
+
+Na seção seguinte, para tentar responder tal pergunta, utilizaremos os dados de \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}), já que, além de fornecerem uma classificação dos casos de corrupção, também lidam com os casos reportados na auditorias realizadas pela Controladoria Geral da União. Para lidar com a questão da ideologia, usaremos a classificação ideológica dos partidos políticos no espectro esquerda-direita construída por \citeauthoronline{Bolognesi2022Sep}~(\citeyear{Bolognesi2022Sep}), com a qual criaremos uma variável que represente o posicionamento ideológico dos candidatos, o qual é, no presente trabalho, tomado como sendo igual ao dos partidos dos quais são membros. A hipótese que fundamenta o presente trabalho é a de que, independentemente dos posicionamentos ideológicos, os candidatos são igualmente punidos.
+
+O intuito aqui é contribuir com a literatura sobre corrupção, comportamento e \textit{accountability} eleitoral, fornecendo mais informações sobre se os eleitores, quando devidamente informados sobre os crimes dos candidatos, apresentam imparcialidade na punição que aplicam aos políticos infratores, pelo menos no que diz respeito ao posicionamento ideológico dos ditos políticos, ou se o eleitorado tende a punir mais os candidatos localizados em um lado do espectro. Dessa forma, o trabalho atual pode estender as contribuições feitas principalmente por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), \citeauthoronline{Boas2019Apr}~(\citeyear{Boas2019Apr}) e \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}), mostrando se e como um fator ideológico interage com os achados dos mesmos.
+
+\chapter{Corrupção e Accountability Eleitoral}
+% -------------------->>>>>>>>>>>>> LEMBRAR DE QUEBRAR OS PARAGRÁFOS EM PARTES MENORES <<<<<<<<<<<<<-------------------------------
+
+%INSERIR AQUI SUBSEÇÃO SOBRE CORRUPÇAO
+\section{Corrupção}
+
+Como se sabe, corrupção é um problema praticamente inevitável dentro e fora das burocracias nas nações pelo mundo e, como argumentado por \citeauthoronline{Treisman2000Jun}~(\citeyear{Treisman2000Jun}), mostra-se um fenômeno difícil de se combater. Essa dificuldade é causada justamente por dois elementos que fazem parte da natureza do fenômeno, quais sejam: a dificuldade de conceitualização~\cite{bussell2015typologies} e a característica furtiva do mesmo, o qual tende a não acontecer de maneira explícita\cite{Treisman2000Jun, gehrke2018eleiccoes}, por justamente ter muitas instâncias consideradas como práticas criminosas.
+
+%CITAR GHERKE, STOKES E TREISMAN
+Sobre a primeira dificuldade, temos como exemplo os diferentes tratamentos que \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), Susan Rose-Ackerman~(\citeyear{Rose-Ackerman1996Sep}) e Daniel Treisman~(\citeyear{Treisman2000Jun}) dão ao mesmo fenômeno, além das tipologias apresentadas por \citeauthoronline{bussell2015typologies}~(\citeyear{bussell2015typologies}) e as definições de \citeauthoronline{sep-corruption}~(\citeyear{sep-corruption}).
+
+Com \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) e \citeauthoronline{Treisman2000Jun}~(\citeyear{Treisman2000Jun}), vemos que os autores lidam com casos considerados como \textit{narrow corruption}, onde as infrações cometidas pelos políticos envolvem irregularidades de menor tamanho, como o uso de notas fiscais falsas, desvios de verba e superfaturação de serviços públicos, sendo, geralmente, praticadas exclusivamente pelos servidores públicos.
+
+\citeauthoronline{Rose-Ackerman1996Sep}~(\citeyear{Rose-Ackerman1996Sep}) também lida com problemas de corrupção, entretanto, o que Ferraz e Finan(\citeyear{ferraz2008exposing}) e \citeauthoronline{Treisman2000Jun}~(\citeyear{Treisman2000Jun}) tratam como \textit{narrow corruption}, \citeauthoronline{Rose-Ackerman1996Sep}~(\citeyear{Rose-Ackerman1996Sep}) chama de \textit{petty corruption}. Além disso, a autora\cite{Rose-Ackerman1996Sep} também cria uma classificação para os casos que ocorrem em escala maior, que ela chama de \textit{grand corruption}, nos quais tanto políticos quanto o setor privado, com empresas multinacionais, utilizam dos poderes e recursos que possuem, políticos ou econômicos, em negociações de caráter particular que envolvem grandes somas de dinheiro.
+
+Como visto acima, apesar de todas as formas de corrupção envolverem necessariamente o abuso do cargo público para fins privados~\cite{gehrke2018eleiccoes}, há diferença na escala, formas e agentes envolvidos nas infrações.
+
+No que diz respeito ao segundo tipo de problema, \citeauthoronline{gehrke2018eleiccoes}~(\citeyear{gehrke2018eleiccoes}) destaca que, por atos de corrupção não serem feitos explicitamente ou publicamente, i.e., de forma aberta, o fenômeno gera uma assimetria informacional entre os praticantes da mesma e aqueles interessados e afetados pelas infrações cometidas por pessoas corruptas, ou seja, nos casos aqui considerados, entre políticos e os eleitores.
+
+Essa assimetria é causada justamente pelo fato de que corrupção é tratada legalmente como crime, e, portanto, passível de punição, a qual potencialmente insurgirá um custo ao praticante\cite{Treisman2000Jun}, como prisão, perda de cargo ou até mesmo inelegibilidade. Portanto, \citeauthoronline{Treisman2000Jun}~(\citeyear{Treisman2000Jun}) afirma que a decisão dos atores sobre cometer ou não a infração é baseada em uma estimativa envolvendo os benefícios esperados e as possíveis punições.
+
+As considerações acima sugerem que, de modo geral, corrupção é só mais uma instância do problema de agente principal, o qual tende a existir sempre que há a delegação de uma classe de atividades~\cite{Rose-Ackerman1978} a um grupo de pessoas, e, nesse caso em específico, acontece principalmente por causa da dificuldade de fiscalizar algumas ações, dado que os agentes que as realizam tentam ao máximo escondê-las~\cite{Treisman2000Jun, Rose-Ackerman1996Sep}.
+
+O problema é que, segundo \citeauthoronline{Rose-Ackerman1996Sep}~(\citeyear{Rose-Ackerman1996Sep}) e \citeauthoronline{Kunicova2005Oct}~(\citeyear{Kunicova2005Oct}), esses tipos de práticas impõem diversos tipos de custos ao país, como a perda de credibilidade internacional e, consequentemente, a diminuição de investimentos externos, o que tem potencial para afetar tanto o crescimento da nação, quanto a confiabilidade nos regimes democráticos~\cite{Boas2019Apr}.
+
+Mas, para além das definições e efeitos da corrupção, neste capítulo, também abordaremos de maneira mais focada os trabalhos que exploram o \textit{accountability} eleitoral, principalmente em sua forma vertical.
+
+Mais especificamente, exploraremos as respostas na literatura para a seguinte pergunta: há punição dos candidatos que, seja antes, durante, ou após as eleições, além de serem denunciados e efetivamente responsabilizados por crimes administrativos, também passaram pela exposição midiática das infrações que cometeram? Ou seja, os eleitores, como forma de punição, deixam de votar nos candidatos reconhecidamente corruptos? Se sim, existem condições para que a punição seja exercida, ou a mera comprovação do caso é suficiente para que os políticos sejam responsabilizados?
+
+%INSERIR AQUI SUBSEÇÃO SOBRE ACCOUNTABILITY E ACCOUNTABILITY ELEITORAL
+\section{Accountability}
+
+% GEGRKE cita Ferejohn(1986); Przeworsk e Stokes(1999); Achen e Bartels(2016) para falar de teoria do accountability
+% Accountability and Authority: Toward a Theory of Political Accountability - John Ferejohn <<<<<<<<<<<<<<<----------- USAR ESSE <<<<<<<<<<- NAO USAR ESSE
+% Usar FEARON para falar sobre o conceito, depois usar Fearon, Ferejohn(86) e Ferejohn acima para ELEITORAL
+
+\subsection{Accountability Eleitoral da Corrupção}
+
+
+\subsection{\citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing})}
+% FERRAZ E FINAN
+No Brasil, um dos primeiros trabalhos no qual essas questões foram exploradas foi feito por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}). Nele, os autores~\cite{ferraz2008exposing} utilizam dos dados coletados pela Controladoria Geral da União em auditorias por ela realizadas nos municípios brasileiros, dados os quais dizem respeito à infrações administrativas, como desvios de fundos transferidos pelo governo federal aos municípios brasileiros. Falaremos, a seguir, um pouco sobre o programa das loterias feitas pela CGU.
+
+O programa de combate à corrupção foi criado durante o governo do ex-presidente Luiz Inácio Lula da Silva, no ano de 2003, e tinha como objetivo investigar de que forma eram empenhadas as verbas municipais, o que poderia tornar mais custosa a corrupção e ter como efeito desejado a redução da mesma~\cite{ferraz2008exposing}. Como já dito anteriormente, o aumento dos custos acontece justamente porque, com a auditoria dos gastos municipais e verbas transferidas pelo governo federal aos municípios brasileiros feitas, há maiores chances de exposição dos casos ocorridos, os quais tornam os agentes praticantes passíveis de punição.
+
+Segundo \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), o programa começou com auditorias feitas em 26 municípios, totalizando um para cada estado brasileiro, os quais eram escolhidos aleatoriamente. Os autores~\cite{ferraz2008exposing} comentam que, à época do estudo, o programa de auditorias foi expandido, englobando 60 cidades escolhidas em cada rodada de sorteios, os quais aconteciam mensalmente e incluíam municípios com menos de quatrocentos e cinquenta mil habitantes.
+
+No que diz respeito ao funcionamento das auditorias, de acordo com \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), a partir do momento em que uma cidade é escolhida para ser auditada, a Controladoria Geral da União coleta informações sobre todas as transferências de fundos federais para o município em questão em um dado intervalo de tempo. Após essa coleta, equipes com entre dez e quinze auditores previamente treinados e um supervisor são alocadas para cada municipalidade, com o objetivo justamente de realizar a apuração das transações e documentos relacionados à fonte de gastos públicos pelos quais ficaram responsáveis~\cite{ferraz2008exposing}.
+
+Segundo \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), o processo de apuração em questão dura aproximadamente dez dias, após os quais os auditores devem submeter à central da Controladoria Geral da União um relatório especificando justamente as irregularidades encontradas, informações as quais serão, em seguida, enviadas ao Tribunal de Contas da União, aos procuradores públicos e ao legislativo da municipalidade auditada~\cite{ferraz2008exposing}. Além disso, os autores~\cite{ferraz2008exposing} também mencionam que ao fim do processo um resumo do relatório é disponibilizado publicamente na internet.
+
+Descrito o processo que caracteriza o programa de auditorias, \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) apresentam a metodologia empregada no artigo deles. No trabalho, os autores~\cite{ferraz2008exposing} utilizaram os dados fornecidos pela Controladoria Geral da União para construir um indicador para corrupção. Esses dados, à época do artigo de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), foram coletados nas auditorias realizadas até o ano de 2005, que continham informações sobre 669 municípios, sendo estes aleatoriamente selecionados nos sorteios executados nas treze primeiras loterias realizadas pela Controladoria Geral da União.
+
+Entretanto, os autores~\cite{ferraz2008exposing} ressaltam que, para os propósitos da pesquisa que pretendiam fazer, era necessário realizar uma filtragem das observações. Após tal filtragem, percebeu-se a remoção de uma parcela considerável da amostra, de modo que os dados efetivamente usados na análise contassem apenas com as municipalidades que possuíam prefeitos elegíveis para reeleição, o que fez com que o banco de dados dos autores~\cite{ferraz2008exposing}, após o corte na amostra, contivesse informações sobre apenas 373 municípios. As informações mencionadas diziam respeito ao valor monetário auditado e transferido da federação para os municípios, em conjunto com a descrição dos problemas encontrados~\cite{ferraz2008exposing}.
+
+Além dos dados providenciados pela Controladoria Geral da União, \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) também usam, de maneira complementar, outras três bases de dados, quais sejam: Tribunal Superior Eleitoral, Instituto Brasileiro de Geografia e Estatística(IBGE) e Perfil dos Municípios Brasileiros. O primeiro, do Tribunal Superior Eleitoral, contém resultados das eleições municipais dos anos 2000 e 2004. Os dados do IBGE dizem respeito aos fatores socioeconômicos brasileiros, enquanto que os dados do Perfil dos Municípios Brasileiros contém informações sobre às características institucionais das municipalidades no Brasil~\cite{ferraz2008exposing}. Os autores~\cite{ferraz2008exposing} utilizam esses dois últimos bancos de dados tanto para explorar as diferenças entre os municípios, quanto para construir operacionalizações de outros fatores considerados relevantes, como, e.g.: reeleição e existência de meios locais de comunicação.
+
+Para determinar quais ações serão consideradas como atos de corrupção, \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) definem o fenômeno como sendo o abuso do poder político para fins individuais, os quais são aqui representados pelas irregularidades, fraudes e desvio de recursos públicos cometidos pelos políticos. Portanto, dentro das tipologias apresentadas anteriormente, os autores~\cite{ferraz2008exposing} lidam com casos de \textit{petty} e \textit{narrow corruption}.
+
+No caso do trabalho dos autores~\cite{ferraz2008exposing}, a justificativa para tal definição é que os mesmos identificaram que, apesar de poder ser feita de diversas formas, a maior parte das ocorrências de corrupção política envolvem a junção de fraudes, as quais são feitas, na maioria dos casos, com a falsificação de notas fiscais, o uso de empresas falsas, ou com a declaração de valores superfaturados para produtos e serviços. Segundo \citeauthoronline{Avis2018Oct}~(\citeyear{Avis2018Oct}), nos relatórios fornecidos pela CGU, os auditores classificam as infrações em três categorias: má-gestão, corrupção moderada e corrupção severa. \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) tratam como casos de corrupção apenas as infrações consideradas moderadas ou severas.
+
+O intuito dos autores~\cite{ferraz2008exposing} é verificar duas coisas: se há punição eleitoral dos políticos incumbentes que cometeram crimes de corrupção e, caso sim, explorar quais são as condições para tal punição. Desta maneira, \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) afirmam que o trabalho deles é o que mais se aproxima da forma ideal de estudar o problema em questão, a qual seria justamente com um experimento onde há a divulgação controlada de informação aos eleitores sobre os casos de corrupção. No caso, como ressaltado pelos autores~\cite{ferraz2008exposing}, esse experimento seria inviável, de modo que os mesmos decidem tomar proveito da aleatorização, na seleção dos municípios a serem auditados, feita pela Controlodaria Geral da União.
+
+Apesar de não poderem controlar a aleatorização das unidades que receberiam o tratamento, os autores~\cite{ferraz2008exposing} entendem que a estratégia de identificação empregada por eles mesmos é ainda assim válida, já que foi possível obter dois conjuntos distintos de cidades, quais sejam: as cidades cujas auditorias foram divulgadas antes das eleições, que é um conjunto composto por trezentos municípios, e aquelas que tiveram as auditorias publicizadas depois das eleições. Este último conjunto, constituído por 376 cidades, representaria justamente o grupo de controle no experimento, dada a aleatorização no processo de seleção~\cite{ferraz2008exposing}.
+
+% ----> Esse negócio de crenças prévias pode ser usado como gancho para o trabalho de Nara
+
+Os autores~\cite{ferraz2008exposing}, entretanto, afirmam que há a possibilidade de que as crenças prévias dos eleitores sobre a prática de corrupção por parte dos políticos em questão possam afetar o grau da punição exercida por aqueles nestes últimos. I.e., se a crença prévia do eleitor for de que o político não é tão corrupto, mas a auditoria revelar que o mesmo é sim de fato mais corrupto do que o esperado, há a chance do eleitor punir mais do que faria caso o observado fosse menor ou exatamente igual ao nível de corrupção estimado pelo eleitor~\cite{ferraz2008exposing}. Portanto, para testar o efeito das diferenças na expectativa de corrupção e o nível observado de corrupção, \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) incluem um termo interativo o qual é composto por uma variável que codifica o momento em que as auditorias foram realizadas, i.e., se a auditoria foi realizada antes ou após as eleições, e uma segunda variável indicando o nível de corrupção descoberto nas auditorias.
+
+% <-----
+
+Por último, \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) falam sobre como escolheram tratar a exposição midiática dos casos de corrupção descobertos na auditoria. No caso, \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) ajustaram o modelo para que nele fosse incluída uma interação entre três variáveis, quais sejam: a realização de auditoria no município, o nível de corrupção verificado e a existência de meios locais para transmissão de informação. O motivo para tal ajuste, segundo os autores~\cite{ferraz2008exposing}, é que os mesmos consideram que a existência e atuação de meios locais de informação pode afetar o conhecimento dos eleitores sobre os casos descobertos, sendo que tal efeito é dependente do momento em que a informação foi revelada, além, é claro, do conteúdo da informação em si.
+
+Os achados de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) mostram que, quando informados sobre as más práticas cometidas pelos políticos que foram descobertas nas auditorias feitas pela Controladoria Geral da União, o eleitorado exercia sim a punição eleitoral dos políticos infratores. Os autores~\cite{ferraz2008exposing} também destacam que essa punição tem o efeito intensificado quando os meios locais de difusão de informação realizam a disseminação dos resultados obtidos nas auditorias, de modo que grande parte da população fosse mais fácil e rapidamente informada dos crimes cometidos pelos candidatos.
+
+Além disso, como era esperado por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), os diferentes modelos empregados pelos autores mostram que os controles e termos interativos foram usados adequadamente, dado que houve variação no resultado principal de que há punição eleitoral de políticos corruptos.
+
+Mais especificamente, essa variações ocorrem justamente de acordo com o momento em que a liberação dos achados da Controladoria Geral da União foi feita, com o nível de corrupção descoberto e, por último, com as escolhas de como difundir tais achados para a população. Candidatos à prefeitura cujos atos de corrupção foram expostos, principalmente no caso de incumbentes, tem performance eleitoral prejudicada com a exposição dos casos pelos quais são culpados, diminuindo significativamente a possibilidade de serem eleitos ou reeleitos~\cite{ferraz2008exposing}.
+
+Esses resultados obtidos por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) foram reforçados pelos achados de \citeauthoronline{Avis2018Oct}~(\citeyear{Avis2018Oct}), os quais fizeram uma replicação de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) com dados atualizados, compreendendo o período entre 2004 e 2012.
+% ---------------> REMINDER: FALAR DOS PERCENTUAIS DE PERDA DE PERFOMANCE ELEITORAL <-----------------
+% ---------------> REMINDER: FALAR DO ARTIGO DE 2018, Avis, Ferraz e Finan <----------------- FEITO
+
+% INSERIR SEÇÃO SOBRE AS LIMITAÇÕES NO ACCOUNTABILITY ELEITORAL
+\section{Limites do Accountability Eleitoral da Corrupção}
+
+% DUNNING ET AL
+Mas o trabalho de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) não é o único que explora a punição de políticos responsáveis por atos de corrupção. Além deles, temos também \citeauthoronline{dunning2019voter}~(\citeyear{dunning2019voter}), os quais realizaram uma meta-análise nos resultados dos experimentos com os quais buscaram identificar o impacto que a exposição de informação acerca do comportamento e ações dos políticos exerce sobre a disposição que os eleitores tem punir os malfeitores, se aqueles de fato conseguem realizar essas punições e qual a intensidade e efetividade das mesmas.
+
+Entretanto, os achados de \cite{dunning2019voter} não são apenas diferentes dos obtidos por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}). Na verdade, \citeauthoronline{dunning2019voter}~(\citeyear{dunning2019voter}) observaram justamente o contrário, i.e., que, segundo uma análise dos resultados obtidos nos experimentos realizados, não há evidências suportando de maneira definitiva a hipótese de que o fornecimento de informação afete muito a intenção que os eleitores tem de punir o comportamento corrupto exposto.
+
+O questionamento dos autores~\cite{dunning2019voter} é justificado tanto pela chance de haver limitações nos trabalhos existentes acerca do tema, quanto pela possibilidade de ter ocorrido uma mudança no comportamento do eleitorado.
+
+Para contornar tais falhas, \citeauthoronline{dunning2019voter}~(\citeyear{dunning2019voter}) decidiram coordernar experimentos, os quais foram realizados por sete equipes independentes em seis países distintos, onde estes últimos foram escolhidos por apresentarem problemas claros na difusão de informação.
+
+No desenho do estudo, havia uma pergunta, teoria, estratégia de mensuração, estimação e intervenção em comum, i.e., que deveriam ser tratados igualmente por todas as equipes, em conjunto com algumas intervenções elaboradas para lidar com as particularidades de cada país~\cite{dunning2019voter}. Dessa forma, os autores~\cite{dunning2019voter} permitiram tanto um aumento na robustez dos resultados obtidos para os fatores em comum, quanto a exploração de outras possíveis variáveis explicativas, através das intervenções específicas para cada país. No experimento, dois meses antes das eleições, foram dadas informações aos eleitores sobre a performance de candidatos incumbentes e partidos políticos, sendo tal informação comparada com a de outros partidos e candidatos, tanto em nível regional quanto nacional~\cite{dunning2019voter}. 
+
+A hipótese principal de trabalho de \citeauthoronline{dunning2019voter}~(\citeyear{dunning2019voter}) é de que as crenças prévias dos eleitores são responsáveis pelos efeitos das informações que recebem. Mais especificamente, foram feitos surveys com o objetivo justamente de estimar quais seriam essas crenças, de modo que assim os autores pudessem determinar se os eleitores avaliariam positiva ou negativamente as informações que viessem a receber, onde positivo representa o caso em que a informação demonstra que a performance reportada do político ou partido é maior do que a crença prévia do eleitor, caso contrário, tem-se que a informação é negativa~\cite{dunning2019voter}.
+
+Portanto, \citeauthoronline{dunning2019voter}~(\citeyear{dunning2019voter}) esperam que informações positivas aumentem o suporte do eleitor aos políticos, e, inversamente, informações negativas diminuam tal suporte. Para testar tal hipótese, \citeauthoronline{dunning2019voter}~(\citeyear{dunning2019voter}) estimam o efeito causal médio da provisão de informação para dois grupos distintos, onde a separação é feita de acordo com o tipo de informação para cada grupo, i.e., se ela é positiva ou negativa.
+
+Os autores~\cite{dunning2019voter} obtém como resultados que os efeitos do fornecimento de informação, para ambos os grupos de eleitores, são iguais à zero. Ou seja, informar os eleitores não afeta, positiva ou negativamente, o suporte dos mesmos aos políticos ou partidos, algo que vai contra o resultado de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}).
+
+\citeauthoronline{dunning2019voter}~(\citeyear{dunning2019voter}) sugerem que, mesmo com informações novas sobre os candidatos e partidos, os eleitores não necessariamente estão dispostos a mudar as próprias crenças, de modo a incorporar a informação recebida, mas ressaltam que isso não necessariamente indica que fornecer informação é algo inútil e deva ser evitado. É importante destacar que o Brasil foi um dos países tratados na pesquisa, e os autores~\cite{dunning2019voter} escolheram como intervenção específica justamente o fornecimento de informações sobre a regularidade dos gastos nos municípios, que é exatamente o tipo de informações com as quais \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) trabalham.
+
+% Citar Nara(2018)
+O trabalho de \citeauthoronline{dunning2019voter}~(\citeyear{dunning2019voter}) indica o seguinte: é necessário que também comecemos a discutir sobre a importância que a população dá à corrupção como pauta ou fator decisivo para determinar se demonstrarão ou não suporte aos candidatos à eleição, i.e., se corrupção é um critério significante no momento de escolha ou ordenamento dos candidatos.
+
+A consideração acima levantada é justificável pois, como argumentado por \citeauthoronline{Pavao2018Jul}~(\citeyear{Pavao2018Jul}), é plenamente possível que corrupção tenha perdido relevância entre o eleitorado, podendo até mesmo ser abandonada por estes últimos, deixando de ser uma característica dos candidatos que é avaliada pela população, população a qual dará mais peso aos posicionamentos que os candidatos apresentam sobre outras questões e agendas.
+
+A escolha de descartar a pauta da corrupção, segundo a autora~\cite{Pavao2018Jul}, seria consequência da percepção que o eleitorado tem sobre a habilidade, ou até mesmo disposição, que os políticos teriam de lidar com a prevenção e ocorrências das infrações.
+
+Mais especificamente, a autora~\cite{Pavao2018Jul} argumenta que os eleitores trabalham com o pressuposto de que os políticos são todos igualmente incapazes de lidar com problemas de corrupção. Consequentemente, se todas as alternativas(aqui, candidatos) são iguais com respeito a um critério, i.e., se todos os políticos são considerados igualmente ineptos para lidar com problemas de corrupção, o eleitorado abandona corrupção como critério de escolha e passa a dar importância a outros fatores~\cite{Pavao2018Jul}.
+
+O trabalho de \citeauthoronline{Pavao2018Jul}~(\cite{Pavao2018Jul}) indica que seria necessária uma mudança no contexto sociopolítico capaz de alterar o pressuposto dos eleitores para que corrupção voltasse a ser um elemento capaz de alterar as preferências do eleitorado., para que corrupção seja, ou volte a ser, uma pauta de relevância pública, capaz de gerar \textit{accountability}, 
+
+
+\chapter{Comportamento, Parcialidade e Ideologia}\label{cap_trabalho_academico}
+
+% -------------------->>>>>>>>>>>>> LEMBRAR DE QUEBRAR OS PARAGRÁFOS EM PARTES MENORES <<<<<<<<<<<<<-------------------------------
+
+Vimos no capítulo anterior que, de acordo com \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), verificou-se na época em que o estudo foi realizado que os eleitores tendiam sim a punir eleitoralmente candidatos responsáveis por crimes de corrupção, desde que as infrações fossem devidamente publicizadas pelos meios de comunicação, principalmente as mídias locais, já que estas recebem uma maior audiência da população nos municípios. Além do mais, os autores~\cite{ferraz2008exposing} também mostraram que a intensidade dessa punição varia de acordo com o momento em que foi feita a realização da exposição dos casos de corrupção.
+
+Entretanto, para além do papel da mídia e o momento em que os casos são revelados, existiria mais algum fator que capaz de afetar a disposição e intensidade com a qual os eleitores punem os candidatos corruptos? Até onde valem os resultados que indicam a eficácia do \textit{accountability} eleitoral como ferramenta capaz de influenciar o comportamento das elites?
+
+Neste capítulo, lidaremos justamente com essa questão e trataremos de apresentar outros fatores, os quais, apesar de não serem explorados no trabalho de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), também poderiam afetar o comportamento individual dos eleitores, pelo menos no que diz respeito ao exercício do \textit{accountability} eleitoral, com a punição, via eleções, das elites que cometeram algum tipo de infração.
+
+A decisão de buscar por esses fatores é fundamentada pelos achados de \citeauthoronline{dunning2019voter}~(\citeyear{dunning2019voter}), os quais mostram que nem sempre o trabalho de informar o eleitorado sobre o comportamento dos candidatos tem o efeito desejado, qual seja, de promover maior \textit{accountability} destes últimos. Isso sugere que os resultados obtidos por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) podem estar condicionados a outros elementos que mudam o comportamento esperado dos eleitores nessas situações de punição. É justamente essa possibilidade que pretendemos explorar aqui, em conjunto com os mecanismos responsáveis pela modificação nas ações observadas.
+
+Os trabalhos que fundamentam o presente capítulo são de \citeauthoronline{Boas2019Apr}~(\citeyear{Boas2019Apr}) e \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}), os quais mostram que as atitudes dos eleitores para com os políticos, principalmente as posturas relativas à sanções e punições, são sensíveis a outras causas que não meramente o conhecimento dos casos de corrupção, como os expostos pela Controladoria Geral da União.
+
+Em conjunto com tais artigos, ainda consideraremos as pesquisas sobre polarização, realizadas por \citeauthoronline{fuks2020afeto}~(\citeyear{fuks2020afeto}) e \citeauthoronline{Bednar2021Dec}~(\citeyear{Bednar2021Dec}), que indicam as formas com a qual variações no grau de polarização em uma sociedade podem afetar a forma com a qual os eleitores em polos ideológicos opostos interagem.
+
+% INSERIR AQUI SUBSEÇÃO SOBRE IDEOLOGIA
+\section{Ideologia}
+
+\subsection{Ideologia e Comportamento}
+
+\subsection{Polarização}
+
+%% Polarização
+
+%Em conjunto com os fatores socioeconômicos e o grau de partidarismo mencionados acima, 
+Primeiramente, comecemos com um fenômeno que recentemente tem mostrado importância para o entendimento do comportamento dos eleitores, que é a polarização política, a qual se manifesta de duas formas distintas: afetiva e ideológica\cite{Bednar2021Dec, Baldassarri2021Dec, Axelrod2021Dec}.
+
+A primeira, segundo \citeauthoronline{Bednar2021Dec}~(\citeyear{Bednar2021Dec}) e \citeauthoronline{Baldassarri2021Dec}~(\citeyear{Baldassarri2021Dec}), está estritamente atrelada ao comportamento das pessoas, dizendo respeito às rivalidades e hostilidades entre grupos ideologicamente distintos, ao ponto das divergências destes gerarem agressividade e repulsa entre as partes, fazendo com que as relações sociais entre membros de grupos diferentes se torne praticamente inexistente, sendo ativamente evitada, justamente por causa da intensa oposição ideológica. Quando há polarização afetiva, pessoas com ideologias distintas passam a se enxergar como inimigos políticos~\cite{Bednar2021Dec}. No que diz respeito à segunda, \citeauthoronline{Axelrod2021Dec}~(\citeyear{Axelrod2021Dec}) definem polarização ideológica como o grau ou nível da dispersão nos posicionamentos ideológicos, i.e., a distribuição no espectro esquerda-direita dos posicionamentos ideológicos em uma sociedade, e.g.: quantos eleitores estão em cada lado e se há concentração nas extremidades ou posições mais moderadas em cada lado, etc.
+
+Agora, sobre polarização afetiva, \citeauthoronline{Bednar2021Dec}~(\citeyear{Bednar2021Dec}) espera que a mesma gere três possíveis efeitos na sociedade, quais sejam: homofilia e aversão, as quais resultam em distribuições ideológicas bimodais; que as elites políticas percam o controle da polarização; e a ocorrência da diminuição no interesse social em conjunto com a redução na diversidade das pautas demandadas.
+
+Sobre o primeiro e este último efeito, segundo \citeauthoronline{Bednar2021Dec}~(\citeyear{Bednar2021Dec}), homofilia é um fenômeno social que corresponde à tendência de pessoas integrarem grupos nos quais os membros possuem interesses e posicionamentos semelhantes, enquanto que a aversão é tida como hostilidade às pessoas que fazem partes de grupos onde a ideologia contrária é observada. O segundo efeito é causado pelo comportamento das elites, quando as mesmas provocam um distanciamento ideológico dos partidos que compõem e, conjuntamente, incentivam a própria base eleitoral a ser mais hostil para com a oposição, de modo que grupos distintos param de se tratarem como adversários com pautas legítimas e passam a se entenderem como inimigos~\cite{Bednar2021Dec}. Por último, a autora~\cite{Bednar2021Dec} considera que polarização pode levar à homogeneização das pautas políticas, o que é potencialmente prejudicial para uma característica fundamental de democracias sólidas, i.e., o pluralismo político.
+
+\subsection{Ideologia e Polarização no Brasil}
+
+Mas, no que diz respeito ao cenário brasileiro: o que esperar da polarização no país?
+
+%% CITAR CARLOS OLIVEIRA E TURGEON
+Segundo \citeauthoronline{Oliveira2015Sep}~(\citeyear{Oliveira2015Sep}), o eleitorado brasileiro não consegue identificar o próprio posicionamento ideológico consistentemente ou, em casos mais graves, simplesmente não declara ou dá importância para tal questão. \citeauthoronline{Oliveira2015Sep}~(\citeyear{Oliveira2015Sep}) afirmam que, mesmo quando os eleitores declaram aderirem a algum posicionamento ideológico, a própria compreensão dos mesmos sobre o que significa ser de direta ou esquerda é potencialmente equivocada.
+
+Partindo desse problema sobre a incorreta compreensão das posições ideológicas existentes, \citeauthoronline{Oliveira2015Sep}~(\citeyear{Oliveira2015Sep}) afirmam que, no Brasil, o comportamento do eleitorado não é influenciado pelas ideologias dos eleitores. Com isso, ao considerarmos os efeitos potenciais que a polarização poderia ter sobre principalmente o comportamento do eleitorado, a isenção ideológica dos eleitores brasileiros, seja ela autodeclarada ou fruto de uma interpretação errada de ideologia, caso verdadeira, sugere que não deveríamos esperar um grau de polarização elevado no nosso contexto político. 
+
+%% CITAR MARIO FUKS
+Entretanto, e ainda lidando com a questão da polarização, quando consideramos o caso do Brasil, a pesquisa realizada por \citeauthoronline{fuks2020afeto}~(\citeyear{fuks2020afeto}) explora questões de polarização ideológica no eleitorado brasileiro. Mais especificamente, \citeauthoronline{fuks2020afeto}~(\citeyear{fuks2020afeto}) buscam verificar duas coisas: a distribuição dos posicionamentos ideológicos no país; se há e qual o nível, no Brasil, da polarização, seja ela afetiva ou ideológica.
+
+Os autores~\cite{fuks2020afeto} observaram que, a partir do ano de 2014, o eleitorado brasileiro apresentou uma maior disposição a declarar o próprio posicionamento ideológico na escala de direita-esquerda. Porém, \citeauthoronline{fuks2020afeto}~(\citeyear{fuks2020afeto}) enfatizam que o aumento na autodeclaração não foi simétrico, dado que eleitores de direita, quando comparados com os do centro e os de esquerda, além de comporem uma maior parte do eleitorado nacional, demonstraram-se muito mais dispostos a declarar o próprio posicionamento do que os membros dos outros grupos ideológicos. 
+
+Além do mais, em complemento aos achados mencionados acima, \citeauthoronline{fuks2020afeto}~(\citeyear{fuks2020afeto}) também verificaram mudanças no grau de polarização nacional. Segundo os autores~\cite{fuks2020afeto}, no que diz respeito à polarização ideológica, o aumento ocorreu mas de maneira irregular, dado que somente os indivíduos na direita apresentaram aproximação do próprio extremo, tendo como consequência o aumento da distância entre os eleitores de direita e as outras parcelas do eleitorado. Na categoria afetiva, entretanto, o aumento foi bem mais expressivo e simétrico, já que partidários de ambos os lados do espectro político-ideológico demonstraram maior rejeição aos candidatos da oposição~\cite{fuks2020afeto}.\\ % <<<<<<<<<<<<<<<< FORMATAÇÃO EXPLÍCITA
+
+\begin{figure}[htp!]
+	\centering
+	\includegraphics[scale=1.0, center]{imagens/polarizacao_fuks_marques}\hspace{\fill}
+	\caption{Polarização Ideológica no Brasil 2002-2018. Fonte: Fuks e Marques(2020, p. 9)}
+	\label{fig:polarizacaofuksmarques}
+\end{figure}
+
+Como o aumento na polarização ideológica foi dominado por eleitores de direita~\cite{fuks2020afeto}, esses resultados demonstram que, em comparação com os eleitores identificados com a esquerda nacional, há, na população brasileira à época da pesquisa de \citeauthoronline{fuks2020afeto}~(\citeyear{fuks2020afeto}), uma maior quantidade de eleitores de direita, os quais estão, dado o aumento assimétrico na polarização afetiva~\cite{fuks2020afeto}, mais dispostos a avaliar negativamente e potencialmente punir os candidatos de esquerda.
+
+Ou seja, ao contrário do que defendem \citeauthoronline{Oliveira2015Sep}~(\citeyear{Oliveira2015Sep}), há sim no Brasil, como mostrado por \citeauthoronline{fuks2020afeto}~(\citeyear{fuks2020afeto}), comportamento ideologicamente orientado, o qual está associado à polarização afetiva.
+
+\subsection{Partidarismo}
+
+% CITAR ALGUMA COISA COM A DEFINIÇÃO DE PARTIDARISMO
+
+%% Citar Samuels e Zucco(2013)
+Para além da polarização afetiva, outro fator que pode modificar, até mesmo intensificando os efeitos daquela, é o partidarismo político, e, no que diz respeito a esse fenômeno, temos o trabalho de \citeauthoronline{Samuels2014Jan}~(\citeyear{Samuels2014Jan}).
+
+No artigo destes últimos\cite{Samuels2014Jan}, além de verificarem o grau de partidarismo no país, os autores estudaram o impacto que o partidarismo tem sobre o comportamento dos eleitores partidários.
+
+Para tanto, primeiramente, \citeauthoronline{Samuels2014Jan}~(\citeyear{Samuels2014Jan}) tratam dos mecanismos que podem causar e regular o partidarismo, quais sejam: o reconhecimento de que existem diversos grupos na sociedade e a percepção de pertencimento a um dos mencionados grupos
+
+ Os autores\cite{Samuels2014Jan} afirmam que a competitividade entre grupos e a relevância que as pessoas dão a pertencerem aos grupos determinam o efeitos que as sinalizações dos partidos sobre questões políticas tem sobre o comportamento dos partidários.
+
+No caso brasileiro, \citeauthoronline{Samuels2014Jan}~(\citeyear{Samuels2014Jan}) afirmam que, comparado com outros países, o partidarismo no Brasil não é tão forte, além de se concentrar em torno de três partidos, quais sejam: PT, PSDB e PMDB(atual MDB). Considerando isso, \citeauthoronline{Samuels2014Jan}~(\citeyear{Samuels2014Jan}) decidem focar a análise nos partidos do PT e PSDB, e formulam algumas hipóteses sobre o comportamento dos partidários desses dois partidos, quais sejam:
+
+\begin{enumerate}
+
+\item Na primeira(H1), esperam que os partidários, ao receberem informações sobre as posições de ambos os partidos, passam a concordar mais com as posições dos partidos que suportam, quando em comparação partidários que não receberam informação alguma;
+
+\item Na segunda hipótese(H2), verificam se o recebimento de informações que dizem respeito exclusivamente ao partido de preferência das pessoas gera mudanças nas opiniões dos partidários;
+
+\item Constroem uma hipótese(H3) na qual esperam que partidários também reajam às sinalizações dos partidos de oposição;
+
+\item E, por último(H4), esperam que informações sobre ambos os partidos não tenham efeitos sobre não-partidários.
+
+\end{enumerate}
+
+Para testar as hipóteses construídas, os autores\cite{Samuels2014Jan} realizaram dois experimentos de survey: um de amostragem por conveniência online, e outro com amostragem probabilística. Como resultados, \citeauthoronline{Samuels2014Jan}~(\citeyear{Samuels2014Jan}) observam evidências que suportam todas as hipóteses apresentadas.
+
+\section{Polarização e Partidarismo: suficientes?}
+
+Mas, da mesma maneira que ocorreu com o trabalho de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), seriam o partidarismo e a polarização afetiva mecanismos importantes o suficiente para alterar o comportamento do eleitorado no que tange o \textit{accountability} eleitoral associado à corrupção, ou teriam os dois fatores mencionados pouca relevância causal, pelo menos no cenário político brasileiro atual?
+
+Ou seja, se tratados como \textit{proxies} para uma potencial operacionalização de ideologia, seriam polarização e partidarismo capazes de explicar a variabilidade na capacidade dos eleitores de exercerem o \textit{accountability} eleitoral? Veremos nos trabalhos a serem apresentados a seguir que talvez não seja esse o caso.
+
+% CONSIDERAR: trabalhos mostrando as pautas defendidas pela direita, i.e., coisas anticorrupção
+
+% BOAS, HIDALGO E MELO -
+
+%%--------->>>>>> VERIFICAR O QUE NARA FALOU: esse artigo é o mesmo que o de Dunning??? Eu acho que não, porque aqui eles usam dados do TCPE, enquanto que Dunning usa CGU. <- Irrelevante TCPE e CGU fornecem as mesmas informações. Focar o argumento nas normas sociais anticorrupção, que é algo que não se fala em Dunning!
+
+\citeauthoronline{Boas2019Apr}~(\citeyear{Boas2019Apr}) estudam a efetividade do que chamam de \textit{accountability} vertical, i.e., a possibilidade, em regimes democráticos, dos eleitores punirem comportamentos inapropriados ou ilegais realizados por políticos. Mais especificamente, os autores~\cite{Boas2019Apr} pretendem verificar como o comportamento dos eleitores é influenciado pelo fornecimento de informações sobre infrações cometidas por candidatos, o que é algo similar ao que foi feito por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}). 
+
+Eles~\cite{Boas2019Apr} argumentam que alguns dos estudos existentes sobre a dita questão não são capazes de explicar satisfatoriamente o comportamento observado dos eleitores. Para \citeauthoronline{Boas2019Apr}~(\citeyear{Boas2019Apr}), os estudos recentes são capazes apenas de expor as preferências normativas que os eleitores tem para com corrupção, preferências as quais são unanimemente contrárias a tais crimes. Entretanto, os autores~\cite{Boas2019Apr} afirmam que, apesar dos eleitores expressarem reprovação das práticas de corrupção, efetivamente, o comportamento dos mesmos não corresponde completamente com o que eles dizem defender.
+
+Para sustentar tal proposição, os autores~\cite{Boas2019Apr} mostram que, comparativamente, eleitores brasileiros tendem a reprovar bem mais a corrupção do que eleitores em outros países, e isso acontece pois, dada a extensão dos problemas com corrupção no país, criou-se uma norma social relacionada à rejeição da mesma. Além disso, \citeauthoronline{Boas2019Apr}~(\citeyear{Boas2019Apr}) realizaram, em conjunto com o Tribunal de Contas de Pernambuco, um experimento cujos resultados foram posteriormente integrados à iniciativa Metaketa construída por \citeauthoronline{dunning2019voter}~(\citeyear{dunning2019voter}), no qual forneciam aos eleitores informações sobre os candidatos que disputavam reeleição para as prefeituras no ano de 2016.
+
+Em tal experimento, as informações sobre os candidatos foram dadas entre duas e três semanas antes das eleições, de modo que alguns fatores fossem melhor aproveitados, como o foco dos eleitores nas eleições, a maior intensidade das campanhas eleitorais, e o término da declaração das candidaturas~\cite{Boas2019Apr}.
+
+O tratamento das informações, que diziam respeito à aprovação ou rejeição das contas dos prefeitos nos municípios dos eleitores em 2013, priorizou o detalhamento e praticidade, em conjunto com dados sobre quantas outras cidades no estado todo possuíam prefeitos cujas contas receberam julgamentos similares~\cite{Boas2019Apr}. Entretanto, no experimento, decidiu-se não expor os motivos pelos quais as contas rejeitadas foram assim avaliadas~\cite{Boas2019Apr}.
+
+O resultado obtido pelos autores~\cite{Boas2019Apr} confirmam a hipótese levantada pelos mesmos de que, na prática, a rejeição ou aprovação das contas dos candidatos não afeta o comportamento do eleitor, mesmo que os eleitores declarem posicionamentos que são contrários às infrações e corrupção. E, dado que \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) também utilizam como um dos controles a presença de mídias locais nas municipalidades, as quais são responsáveis pela difusão de informações sobre as infrações dos políticos, temos que os achados de \citeauthoronline{Boas2019Apr}~(\citeyear{Boas2019Apr}) indicam que houve, à época do trabalho que fizeram, ao menos uma mudança nos tipos de informação que os eleitores consideram importantes para avaliar políticos, pelo menos quando comparando com o comportamento eleitoral observado por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) no começo dos anos 2000.
+
+%%<<<<<<---------
+
+% BOTERO, CORNEJO, GAMBO, PAVAO E NICKERSON
+
+Paralelamente à \citeauthoronline{Boas2019Apr}~(\citeyear{Boas2019Apr}), \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}) também realizam trabalhos nos quais exploram a reação dos eleitores aos tipos de crimes e infrações cometidas pelos políticos.
+
+Os autores~\cite{Botero2021Apr} argumentam que, apesar de algumas ações realizadas por políticos serem reconhecidamente erradas e prejudiciais para o desenvolvimento socioeconômico dos países, não devemos esperar que as possíveis reações do eleitorado à exposição de infrações cometidas sejam necessariamente iguais para qualquer tipo de infração, ou tampouco manifestadas com a mesma intensidade quando similares.
+
+Na verdade, \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}) demonstraram no próprio trabalho que a forma com que o eleitorado reage às infrações é dependente dos efeitos que tal infração tem sobre a vida dos eleitores. Mais especificamente, os autores~\cite{Botero2021Apr} mostram que, mesmo quando tais infrações afetam os eleitores, estes escolherão a forma que consideram mais apropriada de se comportar, forma a qual varia de acordo com o tipo de infração cometida, dado que há diferenças nos efeitos de cada tipo. Por exemplo, segundo os autores~\cite{Botero2021Apr}, os tipos de corrupção podem ser divididos de acordo com quem constitui as partes beneficiadas.
+
+Como consequência disto, \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}) esperam que a rejeição, por parte do eleitorado, aos casos de corrupção seja menor quando os eleitores forem uma das partes beneficiadas, caso contrário, se a distribuição dos benefícios for restrita aos agentes praticantes da corrupção, espera-se uma maior rejeição da população, sendo esta a hipótese de trabalho dos autores.
+
+Ou seja, a reação do eleitorado é dependente de se a infração cometida pelos políticos é de natureza clientelística ou não~\cite{Botero2021Apr}. Além do mais, \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}) também incluem na análise outros fatores que possam ajudar a explicar esse comportamento do eleitorado, como a condição socioeconômica na qual se encontram ou as afiliações partidárias dos eleitores.
+
+% ----------> Isso aqui já é suficiente para formular minha hipótese: que não devemos esperar punição diferente para partidos de esquerda e direita, i.e., são punidos igualmente
+
+\citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}) propõem uma expansão no conjunto das partes beneficiadas nos casos de clientelismo: os autores argumentam que relações clientelísticas podem beneficiar não só os praticantes da infração e os eleitores de tais candidatos, como também os partidos políticos dos infratores. Aqui, segundo \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}), considerando que uma parcela do eleitorado é incluída na divisão dos benefícios gerado pela prática, devemos esperar diferenças na maneira com a qual os eleitores reagirão à infração. Os motivos disso seriam justamente as variações nas condições socioeconômicas e interesse ou fidelidade partidária dos eleitores~\cite{Botero2021Apr}.
+
+Ao considerarem essas variações, os autores~\cite{Botero2021Apr} esperam que a parcela do eleitorado que se encontra em situação de vulnerabilidade socioeconômica demonstre uma maior divergência no grau com que punirão os diferentes tipos de infração, sendo, segundo outra hipótese de trabalho, este grupo de pessoas bem mais tolerantes para com infrações clientelistas. Similarmente, \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}) esperam que a relação entre eleitores e partidos políticos também impacte no grau de tolerância, de modo que a terceira hipótese de trabalho explora a possibilidade de que haja mais tolerância para com infrações quando os eleitores possuírem interesses partidários pelos infratores.
+
+% <----------
+
+Para analisar tais hipóteses, \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}) adotaram um desenho experimental com surveys, onde os respondentes foram apresentados a dois candidatos hipotéticos, o quais possuíam características distintas, sendo um deles responsável por alguma infração, enquanto que o outro era plenamente inocente de qualquer tipo de crime. Os autores~\cite{Botero2021Apr} determinaram que o candidato infrator seria sempre membro do partido que o respondente preferia, caso, é claro, haja a declaração de preferências por algum partido político. Além disso, \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}) também incluíram mais dois experimentos secundários no desenho principal da pesquisa: a variação da fonte jornalística que provia informações sobre as infrações, e a variação na fonte responsável pela acusação das infrações cometidas.
+
+% -------> Também é útil par a formulação da hipótese
+
+Como resultados, os autores~\cite{Botero2021Apr} observaram que os eleitores demonstram rejeição às infrações cometidas pelos políticos, independentemente do tipo da mesma. Entretanto, como esperado pelos autores~\cite{Botero2021Apr}, essa rejeição não é apresentada igualmente para ambos os tipos de infração, sendo a prática de clientelismo por políticos dos partidos que os eleitores preferem bem mais tolerada do que as infrações cometidas para o enriquecimento exclusivo do político infrator, mas ainda assim uma grande parte do eleitorado se demonstrou disposta a votar em candidatos dos partidos de oposição.
+
+Além disso, no que diz respeito às duas hipóteses adicionais, \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}) obtiveram resultados que reforçam a segunda hipótese mas contrariam a terceira. Sobre a segunda hipótese, os autores~\cite{Botero2021Apr} observaram que as camadas da população em piores situações socioeconômicas reprovam menos candidatos com infrações de cunho clientelista, enquanto que a parcela mais rica da população tende a não diferenciar entre os tipos de infração. Entretanto, os autores~\cite{Botero2021Apr} não encontraram evidências que suportem a terceira hipótese, dado que pessoas com alto grau de partidarismo não trataram diferentemente ambos os tipos de infração, enquanto que o mesmo não foi observado em eleitores com menor grau de integração partidária. % Tem algum problema entre a primeira e a terceira hipótese
+
+
+
+% <-------
+
+De maneira geral, como mostrado nos trabalhos supracitados~\cite{Boas2019Apr} e ~\cite{Botero2021Apr}, podemos ver que o comportamento dos eleitores varia de acordo com o tipo de infração realizada, havendo ainda diferenças nas respostas que os mesmos dão aos crimes cometidos pelos políticos, como também na intensidade com a qual tais respostas são aplicadas e nas condições necessárias para cada tipo de reação possível.
+
+Observamos que publicamente os eleitores expressam reprovação e discordância para com os crimes de corrupção por parte das elites~\cite{Boas2019Apr}, fatores que indicam a intenção que os mesmos teriam de, como apresentado por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) e \citeauthoronline{Avis2018Oct}~(\citeyear{Avis2018Oct}), tentar punir eleitoralmente de alguma forma os transgressores que foram expostos, diminuindo assim as chances que os políticos responsabilizados teriam de vencerem uma eleição ou reeleição.
+
+Entretanto, apesar desse consenso expresso sobre a imoralidade da corrupção~\cite{Boas2019Apr}, mostrou-se também que, caso tais crimes beneficiem os eleitores em algum grau, há menor chance dos infratores serem punidos, ou, se for o caso, sejam castigados menos severamente~\cite{Botero2021Apr}. 
+
+\section{Ideologia e Accountability Eleitoral}
+
+Por causa das conclusões apresentadas no parágrafo anterior, aqui, pede-se pela necessidade de darmos uma atenção especial à terceira hipótese de \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}), i.e., a que diz respeito à relevância do partidarismo como fator explicativo relacionado ao comportamento de um certo grupo de eleitores. 
+
+Como mostrado pelos autores~\cite{Botero2021Apr}, verificou-se que o partidarismo por si só não tem grandes efeitos sobre os interesses e capacidades punitivas dos eleitores para com políticos corruptos. Isso sugere que, por mais que haja, como mostrado por \citeauthoronline{fuks2020afeto}~(\citeyear{fuks2020afeto}), um aumento da polarização afetiva no Brasil, caso esta se manifestasse através de um aumento na partidarização dos eleitores, esse movimento por si só não afetaria a capacidade ou interesse que o eleitorado teria de exercer o \textit{accountability} eleitoral, punindo assim os infratores, mesmo que fosse o caso, como defendido por Samuels e Zucco(2013), onde a força do partidarismo tivesse como efeito um aumento no alinhamento e coordenação entre os eleitores e os partidos dos quais fazem parte, partidos os quais poderiam ter como pautas a luta contra a corrupção. 
+
+Portanto, a nossa hipótese de trabalho é a seguinte: que não há diferença no grau com que os partidos de esquerda ou direita são punidos. Em outras palavras, espera-se que, na verdade, ambos os lados, em conjunto com o centro, sejam punidos igualmente.
+
+%%----------> REESCREVER ISSO DE ACORDO COM AS HIPOTESES ADICIONAIS DE BOTERO ET AL, COM O TEXTO DE BOA HIDALGO E MELO, E ENCAIXAR OLIVEIRA E TURGEON, FUKS E ZUCCO TAMBEM
+
+%INSERIR AQUI ALGO SOBRE IDEOLOGIA AFETANDO COMPORTAMENTO PUNITIVO
+
+Os achados de \citeauthoronline{dunning2019voter}~(\citeyear{dunning2019voter}), os quais incluíram também as contribuições de \citeauthoronline{Boas2019Apr}~(\citeyear{Boas2019Apr}) por si só já apresentam conflitos diretos com o trabalho de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) e \citeauthoronline{Avis2018Oct}~(\citeyear{Avis2018Oct}), o que nos permite considerar as limitações nos trabalhos destes últimos, principalmente a possibilidade dos resultados obtidos por estes últimos autores serem dependentes do momento por eles estudado. Mas, para além disso, a hipótese acima levantada é derivada principalmente dos achados de \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}), os quais demonstram que o partidarismo, que é também um elemento da ideologia, por si só não previne uma resposta igual a crimes de corrupção por eleitores de ambos os lados do espectro político-ideológico, mesmo que haja, como mostrado por \citeauthoronline{fuks2020afeto}~(\citeyear{fuks2020afeto}), não só uma diferença na distribuição dos mesmos no Brasil atual, como também uma diferença no grau radicalização por estes demonstrada. 
+
+Ambos os trabalhos~\cite{Boas2019Apr, Botero2021Apr}, tentam explorar com que grau informações, preferências ou alinhamentos partidários dos eleitores para com os candidatos acusados de algum tipo de infração afetam a capacidade que os ditos eleitores tem de punir os infratores, onde o efeito que esperaríamos seria justamente a diminuição na intensidade da punição candidatos que possuem, via partidos, proximidade dos eleitores. \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}) fazem isso com uma análise dos efeitos na variação do nível de imersão partidária dos eleitores, enquanto que \citeauthoronline{Boas2019Apr}~(\citeyear{Boas2019Apr}) verificam como os eleitores utilizam informações sobre o comportamento dos prefeitos que suportam. Esses dois fatores contrariam os possíveis efeitos esperados que as polarizações ideológica e afetiva~\cite{fuks2020afeto} poderiam ter sobre as decisões dos eleitores, e sugerem que alinhamento ideológico não deveria afetar tanto a predisposição quanto a intensidade da punição eleitoral que o eleitorado exerceria sobre os candidatos infratores.
+
+%%<-----------
+
+\chapter{Metodologia e Resultados}
+
+%COMEÇAR COM UMA REPLICAÇAO DE FERRAZ E FINAN, USANDO OS DADOS DE BROLLO E FINAN ATUALIZADOS
+
+%Primeiramente, antes de partirmos para a análise dos dados em si, começaremos com uma replicação do trabalho de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}). Entretanto, ao invés de usar exatamente os mesmos dados já utilizados pelos autores, dada a ocorrência de atualizações nos bancos usados por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}), as quais foram feitas após novas auditorias realizadas pela Controladoria Geral da União, e por um novo censo do Instituto Brasileiro de Geografia e Estatística, usaremos aqui os dados fornecidos por \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}), em conjunto com o censo feito pelo IBGE em 2010 e a base de dados de 2018 do Perfil dos Municípios Brasileiros. O intuito é verificar a consistência e robustez(KING, 2003), i.e., se há mudanças ou não nos resultados obtidos por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) no trabalho dos mesmos. <- Isso aqui vai ser removido, não faz sentido replicar o trabalho dos autores se não tenho dados atuais das auditorias
+
+Aqui neste trabalho, utilizaremos o banco de dados construído por \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}), já que o mesmo contém informações tanto sobre a ocorrência de corrupção nos municípios, quanto uma categorização do tipo de infração cometida.
+
+Mais especificamente, \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}) trabalha com duas categorias distintas de infração, quais sejam: ampla(\textit{broad}) e restrita(\textit{narrow}). Segundo os autores~\cite{Brollo2013Aug}, a definição de corrupção ampla inclui as seguintes práticas: aquisição ilegal, fraude, favorecimento, superfaturamento, desvios de fundos e pagamentos não comprovados. Analogamente, \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}) definem corrupção restrita como: casos severos de aquisições ilegais, fraude, favorecimento e superfaturamento. 
+
+Apesar de ambas as definições possuírem categorias em comum, os autores~\cite{Brollo2013Aug} destacam que a definição ampla pode incluir casos passíveis de serem confundidos com má-gestão, ao invés de corrupção de fato, enquanto que a definição restrita inclui apenas casos severos. Destaca-se que ambas as definições são operacionalizadas com variáveis binárias~\cite{Botero2021Apr}. Entretanto, os autores também constroem indicadores contínuos para ambas as definições de corrupção, os quais representam a porção do valor total auditado que foi utilizada na prática da respectiva infração. Por último, \citeauthoronline{Botero2021Apr}~(\citeyear{Botero2021Apr}) fornecem informações sobre o número de infrações detectadas nas auditorias.
+
+Para além das questões conceituais e operacionais, o banco de dados de \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}) tem informações de origem similar aos dados empregados por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) e \citeauthoronline{Avis2018Oct}~(\citeyear{Avis2018Oct}).
+
+Mais especificamente, em \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}), as observações sobre as infrações são também fornecidas pela Controladoria Geral União, diferindo de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) e \citeauthoronline{Avis2018Oct}~(\citeyear{Avis2018Oct}) apenas na data de coleta, pois o banco de dados de \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}) contém informações que dizem respeito ao intervalo de tempo compreendendo os anos 2000 e 2008 e loterias de número 1 à 29. As observações presentes nos dados de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) compreendem apenas os anos 2000 e 2004 e os treze primeiros sorteios, enquanto que \citeauthoronline{Avis2018Oct}~(\citeyear{Avis2018Oct}) considera o intervalo entre 2004 e 2012, os quais abrangem os sorteios de número 22 à 38. Apesar dos períodos distintos, todos os três trabalhos supracitados~\cite{Brollo2013Aug, ferraz2008exposing, Avis2018Oct} consideram algumas medidas em comum, como, por exemplo, a elaboração de estimativas dos valores utilizados nos casos de corrupção, além de diferenciarem as infrações entre episódios de má-gestão e corrupção.
+
+Por causa dessas similaridades entre os bancos dos trabalhos mencionados, a estratégia metodológica adotada no presente trabalho seguirá, em parte, de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}). Como os dados de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) e, consequentemente, \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}) foram fornecidos pela Controladoria Geral da União, a qual empregou aleatorização no processo de escolha das municipalidades a serem auditadas, o presente trabalho também terá as mesmas vantagens que os estudos supracitados, i.e., será também, na medida do possível, uma aproximação de um trabalho experimental.
+
+Sobre as estatísticas populacionais consideradas pelos autores~\cite{Brollo2013Aug, ferraz2008exposing}, dado o intervalo de tempo em que as observações presentes no banco de dados de \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}) foram feitas, não lidaremos com versões atualizadas das bases complementares utilizadas por \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) mencionadas acima, como os dados do Tribunal Superior Eleitoral e do Instituto Brasileiro de Geografia e Estatística.
+
+Já no que tange à ideologia, para lidarmos com a questão do posicionamento ideológico dos partidos e os candidatos destes, também empregaremos aqui a classificação de ideologias partidárias criada por \citeauthoronline{Bolognesi2022Sep}~(\citeyear{Bolognesi2022Sep}).
+
+Os autores~\cite{Bolognesi2022Sep} constroem uma classificação dos partidos políticos brasileiros na escala ideológica esquerda-direita. Para tanto, \citeauthoronline{Bolognesi2022Sep}~(\citeyear{Bolognesi2022Sep}) fazem surveys com especialistas. Nos surveys, os autores~\cite{Bolognesi2022Sep} estabelecem uma escala espacial, a qual vai de zero a dez, com a qual buscam representar a dimensão esquerda-direita, onde a extrema esquerda se encontra no ponto zero e, simetricamente, a extrema direita se localiza no ponto dez. \citeauthoronline{Bolognesi2022Sep}~(\citeyear{Bolognesi2022Sep}) pediram então que os especialistas posicionassem os trinta e cinco partidos do sistema partidário brasileiro na mencionada escala.
+
+Na escala resultante, os autores~\cite{Bolognesi2022Sep} trabalharam com o seguinte recorte: a faixa de pontuações entre 0 e 4,49 continham partidos de esquerda; entre 4,5 e 5,5 estavam os partidos de centro; e, por último, a partir de 5,51 foram posicionados os partidos de direita.
+
+Uma alternativa à \citeauthoronline{Bolognesi2022Sep}~(\citeyear{Bolognesi2022Sep}), seria a classificação construída por \citeauthoronline{Power2009}~(\citeyear{Power2009}). Nesta, a escala na qual são classificados os partidos é construída a partir de surveys realizados com políticos, aos quais foi questionado como os mesmos posicionariam tanto os partidos sugeridos pelos autores, quanto a si mesmos, na dimensão esquerda-direita~\cite{Power2009}.
+
+Entretanto, por motivações operacionais, utilizaremos o trabalho de Bolognesi, Ribeiro e Codato(2002) ao invés de \citeauthoronline{Power2009}~(\citeyear{Power2009}), pois a classificação construída por estes últimos, dada a época em que foi feita, possui um número menor de partidos quando comparada com a classificação apresentada por \citeauthoronline{Bolognesi2022Sep}~(\citeyear{Bolognesi2022Sep}). 
+
+Um dos motivos para que haja tal diferença entre os trabalhos se dá pois muitos partidos foram criados ou se fundiram na década que se segue ao trabalho de \citeauthoronline{Power2009}~(\citeyear{Power2009}), de modo que a utilização da classificação destes forçaria um corte maior na amostra utilizada aqui, já que não poderíamos atribuir aos partidos não classificados por \citeauthoronline{Power2009}~(\citeyear{Power2009}) um posicionamento ideológico, algo que podemos com o trabalho de \citeauthoronline{Bolognesi2022Sep}~(\citeyear{Bolognesi2022Sep}).
+
+Valendo-se deste recorte feito por \citeauthoronline{Bolognesi2022Sep}~(\citeyear{Bolognesi2022Sep}), podemos construir a tabela abaixo mostrando os partidos aqui considerados, a ideologia e o número de candidatos à prefeitura dos mesmos. Podemos ver na Tabela 1 que o número de partidos de direita difere bastante do número de partidos de esquerda, enquanto que ambas direita e esquerda são, como esperado, maior em número do que partidos de centro.
+
+\begin{table}[htp!]
+	\centering
+	\hfill\includegraphics[scale=0.8, center]{imagens/plot_tabela_partidos_ideologia}\hspace{\fill}
+	\caption{Partidos políticos, ideologia e número de candidatos no período de 2000-2012.}
+	\label{fig:plottabelapartidosideologia}
+\end{table}
+
+Levando em consideração as diferenças entre o número de partidos para cada posição ideológica observadas na Tabela 1, na Figura 1 abaixo, mostramos a mudança, ao longo de dois períodos eleitorais, no número de candidatos derrotados e reeleitos em cada partido nos anos 2004 e 2008.
+
+\begin{figure}[htp!]
+	\centering
+	\hfill\includegraphics[scale=1.0, center]{Datasets/TSE/reeleicao_0408}\hspace{\fill}
+	\caption{Número de candidatos à prefeitura derrotados e reeleitos por partido nos anos de 2004 e 2008.}
+	\label{fig:reelecao0408}
+\end{figure}
+
+Tanto a Tabela 1 quanto a Figura 1 mostram certa predominância de candidatos e partidos de direita. Consideremos em seguida a Figura 2, na qual poderemos visualizar a proporção de candidatos de esquerda, centro e direita que foram derrotados ou reeleitos nas eleições de 2004 e 2008:
+
+\begin{figure}[htp!]
+	\centering
+	\hfill\includegraphics[scale=1.0, center]{Datasets/TSE/reeleicao_ideologia_0408}\hspace{\fill}
+	\caption{Número de candidatos à prefeitura, por ideologia, derrotados e reeleitos nos anos de 2004 e 2008.}
+	\label{fig:reeleicaoideologia0408}
+\end{figure}
+
+Com a Figura 2, podemos reforçar a ideia de que há uma tendência, ao menos nas prefeituras brasileiras, de predominância da direita, tanto em número de partidos quanto de representantes efetivamente eleitos. Entretanto, nota-se também que há uma certa simetria tanto nas derrotas quanto nas reeleições, mostrando que, por mais presente que seja a direita, ela também predomina nas derrotas em ambos os períodos considerados. Apesar das informações corresponderem à períodos eleitorais distintos dos analisador por \citeauthoronline{fuks2020afeto}~(\citeyear{fuks2020afeto}), pode-se observar que já nesta época, a tendência à direita observada pelos autores~\cite{fuks2020afeto} já era existente, ao menos, ressalta-se, na escolha de candidatos à prefeito.
+
+Ainda no que diz respeito à questão ideológica, por não termos acesso à ideologia dos candidatos à prefeitura na época dos estudos de \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}), assumiremos aqui que o posicionamento ideológico dos candidatos corresponde à posição ideológica do partido dos quais fazem parte. Esse pressuposto seria mais justificável caso utilizássemos a classificação de \citeauthoronline{Power2009}~(\citeyear{Power2009}), dado que ela também leva em consideração a autodeclaração ideológica dos candidatos, mas, como mencionado acima, por questões operacionais, tomamos que o mesmo vale para a classificação de \citeauthoronline{Bolognesi2022Sep}~(\citeyear{Bolognesi2022Sep}), mesmo que nesta última o survey tenha sido realizado com especialistas, ao invés de candidatos.
+
+% PRECISO ARRUMAR ESSA TABELA: corrigir nomes das variáveis
+
+\begin{center}
+	\centering
+	\hfill\includegraphics[scale=0.8, center]{imagens/logit_broad_narrow}\hspace{\fill}
+	\captionof{table}{Efeitos da ideologia e tipo de corrupção sobre reeleição.}
+	\label{fig:logitbroadnarrow}
+\end{center}
+
+\newpage
+
+O objetivo é verificar se há igual punição eleitoral dos candidatos infratores, qualquer que seja o posicionamento ideológico destes, ou se o contrário ocorre: os candidatos corruptos em uma das posições são mais punidos do que a oposição. Mais precisamente, nossa hipótese de trabalho é de que há igual punição dos candidatos, independentemente da ideologia que possuem. Para tanto, usaremos uma regressão logística onde um dos controles é um termo interativo compreendendo corrupção e ideologia. %Além disso, como \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}) também fornece informações sobre a porção dos valores auditados mobilizada nas infrações, também usaremos uma regressão linear com o mesmo termo interativo.
+
+Como podemos ver na Tabela 2, apesar de apresentarem relações positivas para com a reeleição, não podemos afirmar que a relação, tanto entre ideologia quanto entre os termos interativos compostos pelos tipos de corrupção e ideologia, é estatisticamente significante, de modo que não se pode sustentar que os candidatos corruptos de esquerda ou direita, quando em comparação com políticos infratores de centro, tem as chances de reeleição prejudicadas pelos crimes cometidos.
+
+%Qual método usar?
+
+%	O que eu quero fazer? -> saber se partidos de esquerda ou direita são igualmente punidos, só fazer uma regressão logística com um termo interativo Ideologia * Corrupção explicando Reeleição
+	
+%	O gráfico da distribuição ideológica ao longo do tempo colocar no capítulo anterior
+
+%			Dinâmica de Opinião
+			
+%Variação na punição em termos da distribuição usada
+
+\section{Limitações}
+
+No presente trabalho, assim como nos resultados originais de \citeauthoronline{ferraz2008exposing}~(\citeyear{ferraz2008exposing}) e \citeauthoronline{Avis2018Oct}~(\citeyear{Avis2018Oct}), a validade dos achados aqui feitos depende em grande parte da qualidade dos dados fornecidos pela Controladoria Geral da União, os quais são obtidos nas auditorias realizadas pela mesma. Mais especificamente, dependemos do rigor metodológico empregado em tais auditorias, como, por exemplo, a manutenção das aleatorizações empregadas nos sorteios das cidades a serem auditadas, ou a idoneidade dos auditores fiscais. Portanto, como usamos aqui um banco de dados construído por \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}) com informações coletadas nas ditas auditorias, caso, entre a data de coleta e o presente momento, tenha ocorrido uma mudança na forma com as quais tais auditorias são realizadas, teremos, potencialmente, um efeito sobre a validade dos resultados aqui apresentados. % <------------- Falar sobre a não continuidade das aleatorizações
+
+% A observação de falta de impacto da corrupção sobre punição eleitoral <- Talvez isso seja melhor no capítulo 2? Ou pode ser usado pra justificar a falta de impacto, ou pra mostrar que depende do contexto/tempo
+Além das questões que competem ao processo de coleta dos dados, 
+Em conjunto com as considerações apresentadas acima, outro fator que tem potencial para limitar a capacidade explicativa do presente estudo é a forma com que os posicionamentos ideológicos foram atribuídos aos candidatos aqui analisados. Mais especificamente, é necessário verificar de forma mais rigorosa o quanto a ideologia dos candidatos corresponde à posição ideológica dos partidos de que fazem parte. Caso haja uma disparidade muito grande entre a ideologia dos candidatos e a dos partidos que os mesmos compõem, perde-se aqui poder explicativo.
+
+Além disso, também devemos levar em conta as limitações causadas pelos dados sobre os partidos aqui considerados. Primeiramente, devemos nos atentar ao fato de que os partidos no presente estudo não correspondem totalmente aos partidos existentes na época que o trabalho de \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}) abrange, dado que muitos partidos foram extintos, criados ou integrados a outros partidos existentes entre os anos de 2008 e o começo da década de 2020. Outra questão que devemos ter em mente diz respeito à própria classificação ideológica dos partidos aqui considerados. Isto se dá pois, segundo o próprio trabalho de \citeauthoronline{Bolognesi2022Sep}~(\citeyear{Bolognesi2022Sep}), dada a dependência que os resultados de surveys tem ao momento em que os mesmos foram feitos, tem-se que na classificação construída pelos autores~\cite{Bolognesi2022Sep}, por ser realizada com partidos existentes em uma época diferente da em que foi feito o trabalho de \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}), os partidos podem apresentar posições ideológicas diferentes das que possuíam entre os anos de 2000 e 2008, que é o período trabalhado pela autora~\cite{Brollo2013Aug}.
+
+Sobre a polarização, considerando que os dados atuais não cobrem o período em que foi observado o aumento na polarização afetiva, pode ser o caso que os potenciais efeitos desta sobre o comportamento do eleitor não sejam observáveis nos dados de \citeauthoronline{Brollo2013Aug}~(\citeyear{Brollo2013Aug}), dado que, de acordo com o trabalho de \citeauthoronline{fuks2020afeto}~(\citeyear{fuks2020afeto}), houve um aumento na polarização apenas na época que sucede o trabalho da autora~\cite{Brollo2013Aug}.
+
+\chapter{Conclusão}
+
+\bibliography{bibliografia}
+
+%\chapter*{Referências Bibliográficas}
+
+%AVIS, Eric; FERRAZ, Claudio; FINAN, Frederico. "Do government audits reduce corruption? Estimating the impacts of exposing corrupt politicians." Journal of Political Economy 126.5 (2018): 1912-1964.
+
+%AXELROD, Robert; DAYMUDE, Joshua J.; FORREST, Stephanie. Preventing extreme polarization of political attitudes. Proceedings of the National Academy of Sciences, v. 118, n. 50, p. e2102139118, 2021.
+
+%BALDASSARRI, Delia; PAGE, Scott E. The emergence and perils of polarization. Proceedings of the National Academy of Sciences, v. 118, n. 50, p. e2116863118, 2021.
+
+%BEDNAR, Jenna. Polarization, diversity, and democratic robustness. Proceedings of the National Academy of Sciences, v. 118, n. 50, p. e2113843118, 2021.
+
+%BOAS, Taylor C.; HIDALGO, F. Daniel; MELO, Marcus André. Norms versus action: Why voters fail to sanction malfeasance in Brazil. American Journal of Political Science, v. 63, n. 2, p. 385-400, 2019.
+
+%BOLOGNESI, B., RIBEIRO, E., CODATO, A.(2022). Uma nova classificação ideológica dos partidos políticos brasileiros. Dados, 66.
+
+%BOTERO, Sandra et al. Are all types of wrongdoing created equal in the eyes of voters?. Journal of Elections, Public Opinion and Parties, v. 31, n. 2, p. 141-158, 2021.
+
+%BROLLO, Fernanda et al. The political resource curse. American Economic Review, v. 103, n. 5, p. 1759-96, 2013.
+
+%BUSSELL, Jennifer. Typologies of corruption: A pragmatic approach. In: Greed, corruption, and the modern state. Edward Elgar Publishing, 2015.
+
+%DUNNING, Thad et al. Voter information campaigns and political accountability: Cumulative findings from a preregistered meta-analysis of coordinated trials. Science advances, v. 5, n. 7, p. eaaw2612, 2019.
+
+%FERRAZ, Claudio; FINAN, Frederico. Exposing corrupt politicians: the effects of Brazil's publicly released audits on electoral outcomes. The Quarterly journal of economics, v. 123, n. 2, p. 703-745, 2008.
+
+%FUKS, Mario; MARQUES, Pedro. Afeto ou ideologia: medindo polarização política no Brasil. 12º ENCONTRO DA ABCP, 2020. % FALTA ESSE <<<<<-------
+
+%GEHRKE, Manoel. Eleições e corrupção nas prefeituras brasileiras. A política, as políticas e os controles: como são governadas as cidades brasileiras, p. 171-184, 2018.
+
+% KING, Gary. 2003. “The Future of Replication.” International Studies Perspectives, 4, Pp. 443–499. Copy at https://tinyurl.com/yxaer2zq
+
+%MILLER, Seumas, "Corruption", The Stanford Encyclopedia of Philosophy (Winter 2018 Edition), Edward N. Zalta (ed.), \href{https://plato.stanford.edu/archives/win2018/entries/corruption/}{\texttt{https://plato.stanford.edu/archives/win2018/\linebreak entries/corruption/}}. 
+
+%OLIVEIRA, Carlos, e TURGEON, Mathieu. "Ideologia e comportamento político no eleitorado brasileiro." Opinião Pública 21 (2015): 574-600.
+
+%ORTELLADO, Pablo; RIBEIRO, Marcio Moretto; ZEINE, Leonardo. Existe polarização política no Brasil? Análise das evidências em duas séries de pesquisas de opinião. Opinião Pública, v. 28, p. 62-91, 2022.
+
+%PAVÃO, Nara. "Corruption as the only option: The limits to electoral accountability." The Journal of Politics 80.3 (2018): 996-1010.
+
+%POWER, Timothy J.; ZUCCO JR, Cesar. Estimating ideology of Brazilian legislative parties, 1990-2005: a research communication. Latin American Research Review, p. 218-246, 2009.
+
+%ROSE-ACKERMAN, Susan. Corruption: A study in political economy. Nova Iorque: Academic Press, 1978.
+
+%ROSE‐ACKERMAN, Susan. Democracy and ‘grand’corruption. International social science journal, v. 48, n. 149, p. 365-380, 1996.
+
+%KUNICOVA, Jana; ROSE-ACKERMAN, Susan. Electoral rules and constitutional structures as constraints on corruption. British journal of political science, v. 35, n. 4, p. 573-606, 2005.
+
+%SAMUELS, David, and ZUCCO Jr, Cesar. "The power of partisanship in Brazil: Evidence from survey experiments." American Journal of Political Science 58.1 (2014): 212-225.
+
+%TREISMAN, Daniel. The causes of corruption: a cross-national study. Journal of public economics, v. 76, n. 3, p. 399-457, 2000.
+
+\end{document}
